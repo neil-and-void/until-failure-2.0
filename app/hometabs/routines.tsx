@@ -2,7 +2,7 @@ import {  Text, View } from 'react-native';
 
 export default function Routines() {
   return (
-    <View >
+    <View>
       <Text>routines</Text>
     </View>
   );

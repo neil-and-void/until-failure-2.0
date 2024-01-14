@@ -4,11 +4,14 @@ export default function HomeTabs() {
   return (
     <Tabs>
       <Tabs.Screen
-        name="stats"
+        name="sessions"
       />
       <Tabs.Screen
         name="routines"
       />  
+      <Tabs.Screen
+        name="stats"
+      />
     </Tabs>
   )
 }
