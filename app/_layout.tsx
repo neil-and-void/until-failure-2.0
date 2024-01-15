@@ -1,22 +1,21 @@
-import { Stack } from 'expo-router'
+import { Stack } from "expo-router";
 
-import { SafeAreaView, Text, StyleSheet, View } from "react-native";
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
-import Constants from "expo-constants"
-import { Redirect } from "expo-router";
-
-
+import { ClerkProvider } from "@clerk/clerk-expo";
+import Constants from "expo-constants";
 
 export default function AppLayout() {
   return (
-      <ClerkProvider publishableKey={Constants.expoConfig.extra.clerkPublishableKey}>
-      <Stack>
-        <Stack.Screen name='hometabs'
+    <ClerkProvider
+      publishableKey={Constants.expoConfig.extra.clerkPublishableKey}
+    >
+      <Stack className="bg-dark">
+        <Stack.Screen
+          name="hometabs"
           options={{
             headerShown: false,
           }}
         />
       </Stack>
     </ClerkProvider>
-  )
+  );
 }
