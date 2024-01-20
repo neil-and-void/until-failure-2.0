@@ -6,16 +6,19 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
+    "backgroundColor": "#09090b",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#09090b"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+            "userInterfaceStyle": "dark"
     },
     "android": {
+            "userInterfaceStyle": "dark",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,6 +30,9 @@
     "plugins": ["expo-router"],
     "extra": {
       "clerkPublishableKey": "pk_test_ZmxlZXQtbWFybW90LTE1LmNsZXJrLmFjY291bnRzLmRldiQ"
+    },
+    "experiments": {
+      "tsconfigPaths": true
     },
     "scheme": "dev.viloria"
   }

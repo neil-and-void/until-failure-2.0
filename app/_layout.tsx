@@ -1,21 +1,32 @@
-import { Stack } from "expo-router";
-
-import { ClerkProvider } from "@clerk/clerk-expo";
+import { Slot } from "expo-router";
 import Constants from "expo-constants";
+import { ClerkProvider } from "@clerk/clerk-expo";
+import * as SecureStore from "expo-secure-store";
 
-export default function AppLayout() {
+const tokenCache = {
+  async getToken(key: string) {
+    try {
+      return SecureStore.getItemAsync(key);
+    } catch (err) {
+      return null;
+    }
+  },
+  async saveToken(key: string, value: string) {
+    try {
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return;
+    }
+  },
+};
+
+export default function Root() {
   return (
     <ClerkProvider
-      publishableKey={Constants.expoConfig.extra.clerkPublishableKey}
+      tokenCache={tokenCache}
+      publishableKey={Constants.expoConfig!.extra!.clerkPublishableKey}
     >
-      <Stack className="bg-dark">
-        <Stack.Screen
-          name="hometabs"
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack>
+      <Slot />
     </ClerkProvider>
   );
 }

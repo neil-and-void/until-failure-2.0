@@ -1,6 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "baseUrl": "./",
+    "paths": {
+      "@until-failure-app/*": ["./*"]
+    }
+  },
+    "include": ["src/**/*", "app/**/*", "./app.d.ts"],
+  "exclude": ["node_modules"]
 }
