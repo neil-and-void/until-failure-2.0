@@ -1,12 +1,10 @@
-import { View, Text, SafeAreaView } from "react-native";
 import React from "react";
+import { SafeAreaView, Text } from "react-native";
 
 export default function Discover() {
   return (
-    <SafeAreaView>
-      <View className="py-4">
-        <Text>Sessions</Text>
-      </View>
+    <SafeAreaView className="px-4">
+      <Text className="text-white text-4xl">Discover</Text>
     </SafeAreaView>
   );
 }

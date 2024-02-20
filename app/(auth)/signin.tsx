@@ -1,13 +1,14 @@
-import { Pressable, Text, TextInput, View } from "react-native";
-import { useAuth, useSignIn } from "@clerk/clerk-expo";
-import { router } from "expo-router";
-import { useState } from "react";
+import { useAuth, useSession, useSignIn } from "@clerk/clerk-expo";
 import Button from "@until-failure-app/src/components/Button";
 import { colors } from "@until-failure-app/src/theme";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Text, TextInput, View } from "react-native";
 
 export default function SignInScreen() {
   const { signIn, setActive, isLoaded } = useSignIn();
-  const { signOut } = useAuth();
+  const { signOut, getToken } = useAuth();
+  const { session } = useSession();
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +16,12 @@ export default function SignInScreen() {
 
   const onSignInPress = async () => {
     if (!isLoaded) {
+      return;
+    }
+
+    if (session) {
+      await setActive({ session: session.id });
+      router.replace("/workouts");
       return;
     }
 
@@ -26,7 +33,7 @@ export default function SignInScreen() {
 
       await setActive({ session: completeSignIn.createdSessionId });
 
-      router.replace("/sessions");
+      router.replace("/workouts");
     } catch (err: any) {
       let errMsg = "Sorry, something went wrong :(";
       if (err?.errors.length > 0 && err.errors[0].message) {

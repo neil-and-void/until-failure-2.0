@@ -30,7 +30,7 @@ export default function AppLayout() {
       }}
     >
       <Tabs.Screen
-        name="sessions"
+        name="workouts"
         options={{
           headerShown: false,
         }}
@@ -44,7 +44,7 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name="workouts"
+        name="routines"
         options={{
           headerShown: false,
         }}
