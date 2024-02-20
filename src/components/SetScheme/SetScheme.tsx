@@ -23,6 +23,13 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["routine", routineId] }),
   });
 
+  const debouncedUpdateSetScheme = debounce(
+    (updatedSetScheme: UpdateSetScheme) => {
+      updateSetSchemeMutation(updatedSetScheme);
+    },
+    500,
+  );
+
   const handleChangedTargetReps = (str: string) => {
     const numStr = [];
     for (const char of str) {
@@ -32,14 +39,14 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
 
     if (numStr.length === 0) {
       setTargetReps("");
-      updateSetSchemeMutation({ ...setScheme, targetReps: 0 });
+      debouncedUpdateSetScheme({ ...setScheme, targetReps: 0 });
       return;
     }
 
     const targetRepsStr = numStr.join("");
     const targetReps = parseInt(targetRepsStr);
     setTargetReps(targetRepsStr);
-    updateSetSchemeMutation({ ...setScheme, targetReps });
+    debouncedUpdateSetScheme({ ...setScheme, targetReps });
   };
 
   return (
