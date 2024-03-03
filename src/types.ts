@@ -10,11 +10,13 @@ export type Routine = {
 export type ExerciseRoutine = {
   id: string;
   name: string;
-  sets: number;
-  reps: number;
   active: boolean;
   routineId: string;
   setSchemes: SetScheme[];
+};
+
+export type UpdateExerciseRoutine = {
+  name: string;
 };
 
 export type SetScheme = {
@@ -36,6 +38,11 @@ export type MeasurementType =
   | "DURATION"
   | "WEIGHTED_DURATION"
   | "BODYWEIGHT";
+
+export enum EditSetSchemeModalType {
+  measurementType = "MEASUREMENT_TYPE",
+  setType = "SET_TYPE",
+}
 
 // export interface Workout {}
 // export interface Exercise {}

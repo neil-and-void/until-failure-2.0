@@ -7,7 +7,7 @@ import { Text, TextInput, View } from "react-native";
 
 export default function SignInScreen() {
   const { signIn, setActive, isLoaded } = useSignIn();
-  const { signOut, getToken } = useAuth();
+  const { signOut } = useAuth();
   const { session } = useSession();
 
   const [emailAddress, setEmailAddress] = useState("");

@@ -1,7 +1,8 @@
+import { FlashList } from "@shopify/flash-list";
 import { Routine } from "@until-failure-app/src/types";
 import { router } from "expo-router";
-import { Text, TouchableHighlight, View } from "react-native";
-import { SwipeListView } from "react-native-swipe-list-view";
+import { Pressable, Text, TouchableHighlight, View } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 
 interface RoutineListProps {
   routines: Routine[];
@@ -13,30 +14,41 @@ const RoutineList = ({ routines, loading }: RoutineListProps) => {
     return <Text className="text-white">Skeleton</Text>;
   }
 
+  if (routines.length === 0) {
+    return (
+      <View>
+        <Text>No routines</Text>
+      </View>
+    );
+  }
+
   return (
-    <SwipeListView
-      className="h-full pl-4"
-      data={routines}
-      renderItem={(data) => (
-        <TouchableHighlight
-          className="py-2 bg-black border-t border-gray-800 flex"
-          onPress={() => router.push(`/routines/${data.item.id}`)}
-        >
-          <View>
-            <Text className="text-white text-lg">{data.item.name}</Text>
-            <Text className="text-white text-md text-secondary-400">
-              5 exercises
-            </Text>
-          </View>
-        </TouchableHighlight>
-      )}
-      renderHiddenItem={() => (
-        <View className="bg-red-400 self-end w-[75px]">
-          <Text className="text-white self-center">Delete</Text>
-        </View>
-      )}
-      rightOpenValue={-75}
-    />
+    <View className="h-full px-4">
+      <FlashList
+        data={routines}
+        estimatedItemSize={62}
+        renderItem={({ item: routine }) => (
+          <Swipeable
+            key={routine.id}
+            renderRightActions={() => (
+              <Pressable className="bg-delete h-full px-4 flex flex-col justify-center">
+                <Text className="text-white">delete</Text>
+              </Pressable>
+            )}
+          >
+            <TouchableHighlight
+              className="py-2 bg-black border-t border-gray-800 flex"
+              onPress={() => router.push(`/routines/${routine.id}`)}
+            >
+              <View>
+                <Text className="text-white text-lg">{routine.name}</Text>
+                <Text className="text-white text-md">5 exercises</Text>
+              </View>
+            </TouchableHighlight>
+          </Swipeable>
+        )}
+      />
+    </View>
   );
 };
 

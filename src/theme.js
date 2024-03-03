@@ -3,6 +3,7 @@ module.exports = {
     dark: "#09090b",
     error: "#FF5858",
     warning: "#FF9E58",
+    delete: "#FF5858",
     confirm: "#99FF80",
     secondary: {
       50: "#fafafa",
