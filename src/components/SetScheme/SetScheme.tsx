@@ -101,8 +101,6 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
     debouncedUpdateSetScheme({ ...setScheme, targetReps });
   };
 
-  console.log(setScheme);
-
   return (
     <View className="flex flex-row">
       <View className="basis-1/4 pr-1 shrink-0">

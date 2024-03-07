@@ -1,5 +1,13 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EditSetSchemeModalContext } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
-import { EditSetSchemeModalType, MeasurementType, SetScheme, SetType } from "@until-failure-app/src/types";
+import { updateSetScheme } from "@until-failure-app/src/services/setSchemes";
+import {
+  EditSetSchemeModalType,
+  MeasurementType,
+  SetScheme,
+  SetType,
+  UpdateSetScheme,
+} from "@until-failure-app/src/types";
 import { useContext, useState } from "react";
 import { Button, Text, View } from "react-native";
 import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
@@ -104,11 +112,13 @@ interface SetTypeForm {
   onSave: (setScheme: SetScheme) => void;
 }
 
-const SetTypeForm = ({ setIsOpen, setScheme }: SetTypeForm) => {
-  const [selectedId, setSelectedId] = useState<SetType>(setScheme.setType);
+const SetTypeForm = ({ setIsOpen, setScheme, onSave }: SetTypeForm) => {
+  const [selectedSetType, setSelectedSetType] = useState<SetType>(
+    setScheme.setType,
+  );
 
   const handleSave = () => {
-    console.log(selectedId);
+    onSave({ ...setScheme, setType: selectedSetType });
   };
 
   return (
@@ -116,8 +126,8 @@ const SetTypeForm = ({ setIsOpen, setScheme }: SetTypeForm) => {
       <Text className="text-white">Select a set type</Text>
       <RadioGroup
         radioButtons={setTypeOptions}
-        onPress={(selectedId) => setSelectedId(selectedId as SetType)}
-        selectedId={selectedId}
+        onPress={(selectedId) => setSelectedSetType(selectedId as SetType)}
+        selectedId={selectedSetType}
         containerStyle={{
           alignItems: "baseline",
         }}
@@ -139,13 +149,12 @@ interface MeasurementTypeFormProps {
 const MeasurementTypeForm = ({
   setIsOpen,
   setScheme,
+  onSave,
 }: MeasurementTypeFormProps) => {
-  const [selectedId, setSelectedId] = useState<MeasurementType>(
-    setScheme.measurement,
-  );
+  const [selectedMeasurement, setSelectedMeasurement] = useState<MeasurementType>(setScheme.measurement);
 
   const handleSave = () => {
-    console.log(selectedId);
+    onSave({ ...setScheme, measurement: selectedMeasurement });
   };
 
   return (
@@ -153,8 +162,8 @@ const MeasurementTypeForm = ({
       <Text className="text-white">Select a measurement type</Text>
       <RadioGroup
         radioButtons={measurementTypeOptions}
-        onPress={(selectedId) => setSelectedId(selectedId as MeasurementType)}
-        selectedId={selectedId}
+        onPress={(selectedId) => setSelectedMeasurement(selectedId as MeasurementType)}
+        selectedId={selectedMeasurement}
         containerStyle={{
           alignItems: "baseline",
         }}
@@ -167,17 +176,30 @@ const MeasurementTypeForm = ({
   );
 };
 
-const TypeForm = () => {
+interface TypeFormProps {
+  routineId: string;
+}
+
+const TypeForm = ({ routineId }: TypeFormProps) => {
   const { editSetSchemeModalState, setEditSetSchemeModalState } = useContext(
     EditSetSchemeModalContext,
   );
+
+  const queryClient = useQueryClient();
+
+  const { mutate: updateSetSchemeMutation } = useMutation({
+    mutationFn: (updatedSetScheme: UpdateSetScheme) =>
+      updateSetScheme(editSetSchemeModalState.setScheme!.id, updatedSetScheme),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["routine", routineId] }),
+  });
 
   const setIsOpen = (isOpen: boolean) => {
     setEditSetSchemeModalState({ ...editSetSchemeModalState, isOpen });
   };
 
   const handleSave = (updatedSetScheme: SetScheme) => {
-    console.log(updatedSetScheme);
+    const { setType, measurement, targetReps } = updatedSetScheme;
+    updateSetSchemeMutation({ setType, measurement, targetReps });
   };
 
   if (editSetSchemeModalState.setScheme === null) {
