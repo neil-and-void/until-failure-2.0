@@ -7,6 +7,15 @@ export type Routine = {
   exerciseRoutines: ExerciseRoutine[];
 };
 
+export type CreateRoutine = Omit<
+  Routine,
+  "id" | "exerciseRoutines" | "createAt" | "active"
+>;
+
+export type UpdateRoutine = {
+  name: string;
+};
+
 export type ExerciseRoutine = {
   id: string;
   name: string;
