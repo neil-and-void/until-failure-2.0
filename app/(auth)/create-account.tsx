@@ -1,14 +1,13 @@
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
-import { useState } from "react";
-import { colors } from "@until-failure-app/src/theme";
 import Button from "@until-failure-app/src/components/Button";
+import { colors } from "@until-failure-app/src/theme";
+import { useState } from "react";
+import { Text, TextInput, View } from "react-native";
 
 export default function CreateAccountScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [pendingVerification, setPendingVerification] = useState(false);
@@ -23,8 +22,7 @@ export default function CreateAccountScreen() {
 
     try {
       await signUp.create({
-        firstName,
-        lastName,
+        username,
         emailAddress,
         password,
       });
@@ -67,29 +65,15 @@ export default function CreateAccountScreen() {
         <View>
           <View className="pb-2">
             <Text className="text-white">
-              Firstname<Text className="text-error">*</Text>
-            </Text>
-            <TextInput
-              autoCapitalize="none"
-              value={firstName}
-              placeholder="First Name..."
-              onChangeText={(firstName) => setFirstName(firstName)}
-              className="text-md bg-secondary-900 p-4 border border-secondary-500 rounded-md text-white"
-              placeholderTextColor={colors.secondary["600"]}
-            />
-          </View>
-
-          <View className="pb-2">
-            <Text className="text-white">
-              Lastname<Text className="text-error">*</Text>
+              Username<Text className="text-error">*</Text>
             </Text>
             <TextInput
               className="text-md bg-secondary-900 p-4 border border-secondary-500 rounded-md text-white"
               placeholderTextColor={colors.secondary["600"]}
               autoCapitalize="none"
-              value={lastName}
-              placeholder="Last Name..."
-              onChangeText={(lastName) => setLastName(lastName)}
+              value={username}
+              placeholder="Username..."
+              onChangeText={(username) => setUsername(username)}
             />
           </View>
 
