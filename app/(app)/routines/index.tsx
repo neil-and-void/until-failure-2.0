@@ -1,8 +1,6 @@
-import { useUser } from "@clerk/clerk-expo";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useQuery } from "@tanstack/react-query";
+import CreateRoutine from "@until-failure-app/src/components/CreateRoutine/CreateRoutine";
 import RoutineList from "@until-failure-app/src/components/RoutineList";
-import { getRoutines } from "@until-failure-app/src/services/routines";
 import { colors } from "@until-failure-app/src/theme";
 import { Stack } from "expo-router";
 import { useCallback, useRef } from "react";
@@ -12,22 +10,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Routines() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const { user, isLoaded: userLoaded } = useUser();
-
-  const { data, isLoading: routinesLoading } = useQuery({
-    queryKey: ["routines"],
-    queryFn: () => getRoutines(user?.id || ""),
-    enabled: !!user?.id,
-  });
-
   const handlePresentModalPress = useCallback(() => {
-    console.log("wuhgood");
     bottomSheetModalRef.current?.present();
   }, []);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  const handleSheetChanges = useCallback((index: number) => {}, []);
 
   return (
     <SafeAreaView>
@@ -46,10 +33,7 @@ export default function Routines() {
         </Pressable>
       </View>
 
-      <RoutineList
-        routines={data || []}
-        loading={!userLoaded || routinesLoading}
-      />
+      <RoutineList routines={[]} loading={false} />
 
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -70,7 +54,7 @@ export default function Routines() {
           elevation: 5,
         }}
       >
-        <Text className="dark:text-white">HI</Text>
+        <CreateRoutine onCreate={() => bottomSheetModalRef.current?.close()} />
       </BottomSheetModal>
     </SafeAreaView>
   );

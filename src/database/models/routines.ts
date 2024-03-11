@@ -1,10 +1,16 @@
 import { Model } from "@nozbe/watermelondb";
-import { Q } from "@nozbe/watermelondb";
-import { children, date, field, readonly, relation, writer } from "@nozbe/watermelondb/decorators";
-import { CreateRoutine, Routine as RoutineType } from "@until-failure-app/src/types";
+import { date, field, readonly, writer } from "@nozbe/watermelondb/decorators";
+import { CreateRoutine } from "@until-failure-app/src/types";
 
 export default class Routine extends Model {
   static table = "routines";
+
+  @field("name")
+  name!: string;
+  @field("active")
+  active!: boolean;
+  @field("private")
+  private!: boolean;
 
   @readonly
   @date("created_at")
@@ -12,31 +18,19 @@ export default class Routine extends Model {
   @readonly
   @date("updated_at")
   updatedAt!: number;
-  @field("name")
-  name!: string;
-  @field("active")
-  active!: boolean;
-  @field("private")
-  private!: boolean;
-  @relation("users", "user_id")
-  user!: Q.Relation<User>;
-  @children("exercise_routines")
-  exerciseRoutines!: Q.Relation<ExerciseRoutine>;
-  @children("workouts")
-  workouts!: Q.Relation<Workout>;
 
   @writer
-  async create(routine: CreateRoutine) {}
+  async createRoutine(routine: CreateRoutine) {}
 
   @writer
-  async get(id: string) {}
+  async getRoutine(id: string) {}
 
   @writer
-  async getUsersRoutines(userId: string) {}
+  async getRoutines(userId: string) {}
 
   @writer
-  async update() {}
+  async updateRoutine() {}
 
   @writer
-  async delete() {}
+  async deleteRoutine() {}
 }

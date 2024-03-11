@@ -1,6 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EditSetSchemeModalContext } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
-import { updateSetScheme } from "@until-failure-app/src/services/setSchemes";
 import {
   EditSetSchemeModalType,
   MeasurementType,
@@ -61,7 +59,6 @@ interface SetSchemeProps {
 }
 
 const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
-  const queryClient = useQueryClient();
   const { editSetSchemeModalState, setEditSetSchemeModalState } = useContext(
     EditSetSchemeModalContext,
   );
@@ -70,14 +67,9 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
     String(setScheme.targetReps),
   );
 
-  const { mutate: updateSetSchemeMutation } = useMutation({
-    mutationFn: (updatedSetScheme: UpdateSetScheme) => updateSetScheme(setScheme.id, updatedSetScheme),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["routine", routineId] }),
-  });
-
   const debouncedUpdateSetScheme = debounce(
     (updatedSetScheme: UpdateSetScheme) => {
-      updateSetSchemeMutation(updatedSetScheme);
+      console.log(updatedSetScheme);
     },
     500,
   );

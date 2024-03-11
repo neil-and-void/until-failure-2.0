@@ -1,13 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EditSetSchemeModalContext } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
-import { updateSetScheme } from "@until-failure-app/src/services/setSchemes";
-import {
-  EditSetSchemeModalType,
-  MeasurementType,
-  SetScheme,
-  SetType,
-  UpdateSetScheme,
-} from "@until-failure-app/src/types";
+import { EditSetSchemeModalType, MeasurementType, SetScheme, SetType } from "@until-failure-app/src/types";
 import { useContext, useState } from "react";
 import { Button, Text, View } from "react-native";
 import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
@@ -185,21 +177,12 @@ const TypeForm = ({ routineId }: TypeFormProps) => {
     EditSetSchemeModalContext,
   );
 
-  const queryClient = useQueryClient();
-
-  const { mutate: updateSetSchemeMutation } = useMutation({
-    mutationFn: (updatedSetScheme: UpdateSetScheme) =>
-      updateSetScheme(editSetSchemeModalState.setScheme!.id, updatedSetScheme),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["routine", routineId] }),
-  });
-
   const setIsOpen = (isOpen: boolean) => {
     setEditSetSchemeModalState({ ...editSetSchemeModalState, isOpen });
   };
 
   const handleSave = (updatedSetScheme: SetScheme) => {
     const { setType, measurement, targetReps } = updatedSetScheme;
-    updateSetSchemeMutation({ setType, measurement, targetReps });
   };
 
   if (editSetSchemeModalState.setScheme === null) {

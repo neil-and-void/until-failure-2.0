@@ -1,16 +1,16 @@
 import { Model } from "@nozbe/watermelondb";
 import { date, field, readonly, relation } from "@nozbe/watermelondb/decorators";
 
-export default class ExerciseRoutine extends Model {
-  static table = "exercise_routines";
+export default class Exercise extends Model {
+  static table = "exercises";
 
-  @field("name")
-  name!: string;
-  @field("active")
-  active!: boolean;
+  @field("notes")
+  notes!: string;
 
+  @relation("exercise_routines", "exercise_routine_id")
+  exerciseRoutines;
   @relation("routines", "routine_id")
-  routine;
+  routines;
 
   @readonly
   @date("created_at")
