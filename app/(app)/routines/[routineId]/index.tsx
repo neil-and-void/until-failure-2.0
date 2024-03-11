@@ -1,12 +1,10 @@
-import { useUser } from "@clerk/clerk-expo";
-import { useQuery } from "@tanstack/react-query";
 import ExerciseRoutineList from "@until-failure-app/src/components/ExerciseRoutineList";
 import TypeForm from "@until-failure-app/src/components/TypeForm";
 import {
   EditSetSchemeModalContext,
   EditSetSchemeModalState,
 } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
-import { getRoutine } from "@until-failure-app/src/services/routines";
+import { Routine } from "@until-failure-app/src/types";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Button, Modal, View } from "react-native";
@@ -39,7 +37,6 @@ const EditButton = ({ mode, onPress }: EditButtonProps) => {
 };
 
 function ViewRoutine() {
-  const { user, isLoaded: userLoaded } = useUser();
   const [editMode, setEditMode] = useState<Mode>(Mode.View);
   const [editSetSchemeState, setEditSetSchemeState] = useState<EditSetSchemeModalState>({
     setScheme: null,
@@ -49,11 +46,14 @@ function ViewRoutine() {
 
   const { routineId } = useLocalSearchParams();
 
-  const { data: routine, isLoading: routineLoading } = useQuery({
-    queryKey: ["routine", routineId],
-    queryFn: () => getRoutine(routineId as string),
-    enabled: !!user?.id,
-  });
+  const routine = {
+    id: "1234",
+    name: "Routine",
+    userId: "userid",
+    active: true,
+    createdAt: "idk",
+    exerciseRoutines: [],
+  } as Routine;
 
   return (
     <EditSetSchemeModalContext.Provider
@@ -66,14 +66,11 @@ function ViewRoutine() {
         <Stack.Screen
           options={{
             headerBackTitle: "routines",
-            title: routine?.name || "",
+            title: "TODO",
             headerRight: () => <EditButton mode={editMode} onPress={setEditMode} />,
           }}
         />
-        <ExerciseRoutineList
-          routine={routine}
-          loading={!userLoaded || routineLoading}
-        />
+        <ExerciseRoutineList routine={routine} loading={false} />
         <View className="justify-center items-center flex-1 flex flex-col">
           <Modal
             visible={editSetSchemeState.isOpen}
@@ -82,7 +79,7 @@ function ViewRoutine() {
           >
             <View className="justify-center items-center flex-1 flex flex-col bg-black/75">
               <View className="flex flex-col justify-center items-center bg-secondary-800 p-4 rounded-lg">
-                <TypeForm />
+                <TypeForm routineId={routine.id} />
               </View>
             </View>
           </Modal>

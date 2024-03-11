@@ -1,87 +1,66 @@
-import { appSchema, tableSchema } from "@nozbe/watermelondb";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const mySchema = appSchema({
-  version: 1, // Increment this version whenever you make changes to your database schema
-  tables: [
-    tableSchema({
-      name: "routines",
-      columns: [
-        { name: "id", type: "string", isIndexed: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
-        { name: "deleted_at", type: "number", isOptional: true },
-        { name: "name", type: "string" },
-        { name: "active", type: "boolean" },
-        { name: "private", type: "boolean" },
-        { name: "user_id", type: "string", isIndexed: true },
-      ],
-    }),
-    tableSchema({
-      name: "exercise_routines",
-      columns: [
-        { name: "id", type: "string", isIndexed: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
-        { name: "deleted_at", type: "number", isOptional: true },
-        { name: "name", type: "string" },
-        { name: "active", type: "boolean" },
-        { name: "routine_id", type: "string", isIndexed: true },
-      ],
-    }),
-    tableSchema({
-      name: "set_schemes",
-      columns: [
-        { name: "id", type: "string", isIndexed: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
-        { name: "deleted_at", type: "number", isOptional: true },
-        { name: "target_duration", type: "number" },
-        { name: "target_reps", type: "number" },
-        { name: "set_type", type: "string" },
-        { name: "measurement", type: "string" },
-        { name: "exercise_routine_id", type: "string", isIndexed: true },
-      ],
-    }),
-    tableSchema({
-      name: "workouts",
-      columns: [
-        { name: "id", type: "string", isIndexed: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
-        { name: "deleted_at", type: "number", isOptional: true },
-        { name: "start", type: "number" },
-        { name: "end", type: "number", isOptional: true },
-        { name: "routine_id", type: "string", isIndexed: true },
-        { name: "user_id", type: "string", isIndexed: true },
-      ],
-    }),
-    tableSchema({
-      name: "exercises",
-      columns: [
-        { name: "id", type: "string", isIndexed: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
-        { name: "deleted_at", type: "number", isOptional: true },
-        { name: "notes", type: "string", isOptional: true },
-        { name: "exercise_routine_id", type: "string", isIndexed: true },
-        { name: "workout_id", type: "string", isIndexed: true },
-      ],
-    }),
-    tableSchema({
-      name: "set_entries",
-      columns: [
-        { name: "id", type: "string", isIndexed: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
-        { name: "deleted_at", type: "number", isOptional: true },
-        { name: "weight", type: "number", isOptional: true },
-        { name: "reps", type: "number", isOptional: true },
-        { name: "seconds", type: "number", isOptional: true },
-        { name: "set_type", type: "string" },
-        { name: "measurement", type: "string" },
-        { name: "exercise_id", type: "string", isIndexed: true },
-        { name: "set_scheme_id", type: "string", isIndexed: true },
-      ],
-    }),
-  ],
+export const routines = sqliteTable("routines", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  active: integer("active", { mode: "boolean" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  deletedAt: integer("deleted_at", { mode: "timestamp" }),
+});
+
+export const exerciseRoutines = sqliteTable("exercise_routines", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  active: integer("active", { mode: "boolean" }).notNull(),
+  routineId: integer("routine_id").references(() => routines.id),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  deletedAt: integer("deleted_at", { mode: "timestamp" }),
+});
+
+export const setSchemes = sqliteTable("set_schemes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  targetReps: integer("target_reps").notNull().default(0),
+  targetDuration: integer("target_duration").notNull().default(0),
+  setType: integer("set_type").notNull().default("WORKING"),
+  measurement: integer("measurement").notNull().default("WEIGHT"),
+  exerciseRoutineId: integer("exercise_routine_id").references(() => exerciseRoutines.id),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  deletedAt: integer("deleted_at", { mode: "timestamp" }),
+});
+
+export const workouts = sqliteTable("workouts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  start: integer("start", { mode: "timestamp" }).notNull(),
+  end: integer("end", { mode: "timestamp" }),
+  routineId: integer("routine_id").references(() => routines.id),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  deletedAt: integer("deleted_at", { mode: "timestamp" }),
+});
+
+export const exercises = sqliteTable("exercises", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  notes: text("notes"),
+  routineId: integer("routine_id").references(() => routines.id),
+  exerciseRoutineId: integer("exercise_routine_id").references(() => exerciseRoutines.id),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  deletedAt: integer("deleted_at", { mode: "timestamp" }),
+});
+
+export const setEntries = sqliteTable("set_entries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  weight: integer("weight"),
+  reps: integer("reps"),
+  seconds: integer("seconds"),
+  setType: text("set_type").notNull().default("WORKING"),
+  measurement: text("measurement").notNull().default("WORKING"),
+  exerciseId: integer("exercise_id").references(() => exercises.id),
+  setSchemeId: integer("set_scheme_id").references(() => setSchemes.id),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });

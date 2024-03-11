@@ -17,7 +17,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "userInterfaceStyle": "dark"
+      "userInterfaceStyle": "dark",
+      "bundleIdentifier": "com.anonymous.until-failure-2.0"
     },
     "android": {
       "userInterfaceStyle": "dark",
@@ -31,10 +32,10 @@
     },
     "plugins": [
       "expo-router",
-      "expo-build-properties"
+      "expo-build-properties",
+      "@morrowdigital/watermelondb-expo-plugin"
     ],
     "extra": {
-      "clerkPublishableKey": "pk_test_ZmxlZXQtbWFybW90LTE1LmNsZXJrLmFjY291bnRzLmRldiQ",
       "untilFailureAPI": ""
     },
     "experiments": {
