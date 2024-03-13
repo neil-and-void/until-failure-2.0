@@ -1,5 +1,6 @@
+import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import database from "@until-failure-app/src/database";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Text, View } from "react-native";
 import Button from "../Button";
 import TextInput from "../TextInput";
@@ -10,8 +11,10 @@ interface CreateRoutineProps {
 
 function CreateRoutine({ onCreate }: CreateRoutineProps) {
   const [name, setName] = useState("");
+  const { db } = useContext(DatabaseContext);
 
-  const createRoutine = () => {
+  const createRoutine = async () => {
+    await db.routines.createRoutine({ name });
     onCreate();
   };
 

@@ -1,7 +1,6 @@
 export type Routine = {
   id: string;
   name: string;
-  userId: string;
   active: boolean;
   createdAt: string;
   exerciseRoutines: ExerciseRoutine[];
@@ -9,7 +8,7 @@ export type Routine = {
 
 export type CreateRoutine = Omit<
   Routine,
-  "id" | "exerciseRoutines" | "createAt" | "active"
+  "id" | "exerciseRoutines" | "createAt" | "active" | "createdAt"
 >;
 
 export type UpdateRoutine = {

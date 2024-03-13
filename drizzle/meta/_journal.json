@@ -8,6 +8,13 @@
       "when": 1710140210670,
       "tag": "0000_colossal_kabuki",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1710313968839,
+      "tag": "0001_panoramic_nomad",
+      "breakpoints": true
     }
   ]
 }
