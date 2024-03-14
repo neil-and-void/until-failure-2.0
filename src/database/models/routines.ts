@@ -1,13 +1,14 @@
-import { CreateRoutine, UpdateRoutine } from "@until-failure-app/src/types";
+import { CreateRoutine, Routine, UpdateRoutine } from "@until-failure-app/src/types";
 import { eq } from "drizzle-orm";
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import * as Crypto from "expo-crypto";
 import { routines } from "../schema";
+import * as schema from "../schema";
 
 export class Routines {
-  private db: ExpoSQLiteDatabase;
+  private db: ExpoSQLiteDatabase<typeof schema>;
 
-  constructor(db: ExpoSQLiteDatabase) {
+  constructor(db: ExpoSQLiteDatabase<typeof schema>) {
     this.db = db;
   }
 
@@ -26,11 +27,17 @@ export class Routines {
   }
 
   async getRoutines(limit: number = 20) {
-    return await this.db.select().from(routines).limit(limit);
+    const routineList = await this.db.query.routines.findMany({ limit, with: { exerciseRoutines: true } });
+    return routineList;
   }
 
   async getRoutine(id: string) {
-    return await this.db.select().from(routines).where(eq(routines.id, id));
+    const routine = await this.db.query.routines.findFirst({
+      where: eq(routines.id, id),
+      with: { exerciseRoutines: { with: { setSchemes: true } } },
+    });
+    console.log(routine);
+    return routine;
   }
 
   async updateRoutines(routine: UpdateRoutine) {

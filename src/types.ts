@@ -2,13 +2,15 @@ export type Routine = {
   id: string;
   name: string;
   active: boolean;
-  createdAt: string;
   exerciseRoutines: ExerciseRoutine[];
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 };
 
 export type CreateRoutine = Omit<
   Routine,
-  "id" | "exerciseRoutines" | "createAt" | "active" | "createdAt"
+  "id" | "exerciseRoutines" | "active" | "createdAt" | "deletedAt" | "updatedAt"
 >;
 
 export type UpdateRoutine = {
@@ -21,6 +23,9 @@ export type ExerciseRoutine = {
   active: boolean;
   routineId: string;
   setSchemes: SetScheme[];
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 };
 
 export type UpdateExerciseRoutine = {

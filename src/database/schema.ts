@@ -1,3 +1,4 @@
+import { Many, relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const routines = sqliteTable("routines", {
@@ -8,6 +9,9 @@ export const routines = sqliteTable("routines", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+export const routinesRelations = relations(routines, ({ many }) => ({
+  exerciseRoutines: many(exerciseRoutines),
+}));
 
 export const exerciseRoutines = sqliteTable("exercise_routines", {
   id: text("id").primaryKey(),
@@ -18,6 +22,13 @@ export const exerciseRoutines = sqliteTable("exercise_routines", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+export const exerciseRoutinesRelations = relations(exerciseRoutines, ({ one, many }) => ({
+  routine: one(routines, {
+    fields: [exerciseRoutines.routineId],
+    references: [routines.id],
+  }),
+  setSchemes: many(setSchemes),
+}));
 
 export const setSchemes = sqliteTable("set_schemes", {
   id: text("id").primaryKey(),
@@ -30,6 +41,12 @@ export const setSchemes = sqliteTable("set_schemes", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+export const setSchemesRelations = relations(setSchemes, ({ one }) => ({
+  exerciseRoutine: one(exerciseRoutines, {
+    fields: [setSchemes.exerciseRoutineId],
+    references: [exerciseRoutines.id],
+  }),
+}));
 
 export const workouts = sqliteTable("workouts", {
   id: text("id").primaryKey(),
@@ -40,16 +57,28 @@ export const workouts = sqliteTable("workouts", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+export const workoutsRelations = relations(workouts, ({ one, many }) => ({
+  routine: one(routines),
+  exercises: many(exercises),
+}));
 
 export const exercises = sqliteTable("exercises", {
   id: text("id").primaryKey(),
   notes: text("notes"),
-  routineId: integer("routine_id").references(() => routines.id),
+  workoutId: integer("workout_id").references(() => workouts.id),
   exerciseRoutineId: integer("exercise_routine_id").references(() => exerciseRoutines.id),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+export const exercisesRelations = relations(exercises, ({ one, many }) => ({
+  workout: one(workouts, {
+    fields: [exercises.workoutId],
+    references: [workouts.id],
+  }),
+  exerciseRoutine: one(exerciseRoutines),
+  setEntries: many(setEntries),
+}));
 
 export const setEntries = sqliteTable("set_entries", {
   id: text("id").primaryKey(),
@@ -64,3 +93,7 @@ export const setEntries = sqliteTable("set_entries", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+export const setEntriesRelations = relations(setEntries, ({ one }) => ({
+  exercise: one(exercises),
+  setScheme: one(setSchemes),
+}));

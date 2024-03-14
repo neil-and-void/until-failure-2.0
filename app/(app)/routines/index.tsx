@@ -1,17 +1,22 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useQuery } from "@tanstack/react-query";
 import CreateRoutine from "@until-failure-app/src/components/CreateRoutine/CreateRoutine";
 import RoutineList from "@until-failure-app/src/components/RoutineList";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { colors } from "@until-failure-app/src/theme";
 import { Stack } from "expo-router";
-import { useCallback, useContext, useMemo, useRef } from "react";
+import { useCallback, useContext, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Routines() {
   const { db } = useContext(DatabaseContext);
 
-  const routines = useMemo(async () => await db.routines.getRoutines(), []);
+  // Queries
+  const { data: routines, isLoading: getRoutinesLoading } = useQuery({
+    queryKey: ["routines"],
+    queryFn: () => db.routines.getRoutines(),
+  });
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -38,7 +43,7 @@ export default function Routines() {
         </Pressable>
       </View>
 
-      <RoutineList routines={routines} loading={false} />
+      <RoutineList routines={routines || []} loading={getRoutinesLoading} />
 
       <BottomSheetModal
         ref={bottomSheetModalRef}

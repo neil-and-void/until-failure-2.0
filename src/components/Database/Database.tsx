@@ -12,7 +12,6 @@ interface DatabaseProviderProps {
 
 const DatabaseProvider = ({ children }: DatabaseProviderProps) => {
   const { success, error } = useMigrations(database, migrations);
-  console.log(success, error);
 
   const db = useMemo(() => {
     return {

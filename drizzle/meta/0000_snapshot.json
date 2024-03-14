@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "a720f0df-2476-41b8-91ef-2979ce6854be",
+  "id": "2b04801f-8dd2-4968-8ff2-20cf46dfb55e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "exercise_routines": {
@@ -9,10 +9,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "name": {
           "name": "name",
@@ -81,10 +81,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "notes": {
           "name": "notes",
@@ -93,8 +93,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "routine_id": {
-          "name": "routine_id",
+        "workout_id": {
+          "name": "workout_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -131,12 +131,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "exercises_routine_id_routines_id_fk": {
-          "name": "exercises_routine_id_routines_id_fk",
+        "exercises_workout_id_workouts_id_fk": {
+          "name": "exercises_workout_id_workouts_id_fk",
           "tableFrom": "exercises",
-          "tableTo": "routines",
+          "tableTo": "workouts",
           "columnsFrom": [
-            "routine_id"
+            "workout_id"
           ],
           "columnsTo": [
             "id"
@@ -166,10 +166,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "name": {
           "name": "name",
@@ -217,10 +217,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "weight": {
           "name": "weight",
@@ -332,10 +332,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "target_reps": {
           "name": "target_reps",
@@ -355,7 +355,7 @@
         },
         "set_type": {
           "name": "set_type",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -363,7 +363,7 @@
         },
         "measurement": {
           "name": "measurement",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -422,10 +422,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "start": {
           "name": "start",
