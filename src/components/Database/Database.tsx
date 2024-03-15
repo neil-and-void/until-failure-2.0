@@ -1,6 +1,6 @@
 import migrations from "@until-failure-app/drizzle/migrations";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
-import database from "@until-failure-app/src/database/database";
+import database from "@until-failure-app/src/database";
 import { Routines } from "@until-failure-app/src/database/models";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { ReactNode, useMemo } from "react";
@@ -12,7 +12,6 @@ interface DatabaseProviderProps {
 
 const DatabaseProvider = ({ children }: DatabaseProviderProps) => {
   const { success, error } = useMigrations(database, migrations);
-  console.log(error);
 
   const db = useMemo(() => {
     return {

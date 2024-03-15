@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "8777bb64-445d-47d0-8cbc-77528c5d0914",
+  "id": "63b34c09-9728-4375-8c50-bdeec775387c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "exercise_routines": {
@@ -373,7 +373,7 @@
           "name": "exercise_routine_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -445,7 +445,7 @@
           "name": "routine_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
