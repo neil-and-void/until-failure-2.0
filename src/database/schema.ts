@@ -1,66 +1,99 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { v4 as uuidv4 } from "uuid";
 
 export const routines = sqliteTable("routines", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey().$defaultFn(() => uuidv4()),
   name: text("name").notNull(),
   active: integer("active", { mode: "boolean" }).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+// export const routinesRelations = relations(routines, ({ many }) => ({
+//   exerciseRoutines: many(exerciseRoutines),
+// }));
 
 export const exerciseRoutines = sqliteTable("exercise_routines", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey().$defaultFn(() => uuidv4()),
   name: text("name").notNull(),
   active: integer("active", { mode: "boolean" }).notNull(),
-  routineId: integer("routine_id").references(() => routines.id),
+  routineId: text("routine_id").references(() => routines.id).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+// export const exerciseRoutinesRelations = relations(exerciseRoutines, ({ one, many }) => ({
+//   routine: one(routines, {
+//     fields: [exerciseRoutines.routineId],
+//     references: [routines.id],
+//   }),
+//   setSchemes: many(setSchemes),
+// }));
 
 export const setSchemes = sqliteTable("set_schemes", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey().$defaultFn(() => uuidv4()),
   targetReps: integer("target_reps").notNull().default(0),
   targetDuration: integer("target_duration").notNull().default(0),
-  setType: integer("set_type").notNull().default("WORKING"),
-  measurement: integer("measurement").notNull().default("WEIGHT"),
-  exerciseRoutineId: integer("exercise_routine_id").references(() => exerciseRoutines.id),
+  setType: text("set_type").notNull().default("WORKING"),
+  measurement: text("measurement").notNull().default("WEIGHT"),
+  exerciseRoutineId: text("exercise_routine_id").references(() => exerciseRoutines.id).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+// export const setSchemesRelations = relations(setSchemes, ({ one }) => ({
+//   exerciseRoutine: one(exerciseRoutines, {
+//     fields: [setSchemes.exerciseRoutineId],
+//     references: [exerciseRoutines.id],
+//   }),
+// }));
 
 export const workouts = sqliteTable("workouts", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey().$defaultFn(() => uuidv4()),
   start: integer("start", { mode: "timestamp" }).notNull(),
   end: integer("end", { mode: "timestamp" }),
-  routineId: integer("routine_id").references(() => routines.id),
+  routineId: text("routine_id").references(() => routines.id).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+// export const workoutsRelations = relations(workouts, ({ one, many }) => ({
+//   routine: one(routines),
+//   exercises: many(exercises),
+// }));
 
 export const exercises = sqliteTable("exercises", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey().$defaultFn(() => uuidv4()),
   notes: text("notes"),
-  routineId: integer("routine_id").references(() => routines.id),
-  exerciseRoutineId: integer("exercise_routine_id").references(() => exerciseRoutines.id),
+  workoutId: text("workout_id").references(() => workouts.id),
+  exerciseRoutineId: text("exercise_routine_id").references(() => exerciseRoutines.id),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+// export const exercisesRelations = relations(exercises, ({ one, many }) => ({
+//   workout: one(workouts, {
+//     fields: [exercises.workoutId],
+//     references: [workouts.id],
+//   }),
+//   exerciseRoutine: one(exerciseRoutines),
+//   setEntries: many(setEntries),
+// }));
 
 export const setEntries = sqliteTable("set_entries", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey().$defaultFn(() => uuidv4()),
   weight: integer("weight"),
   reps: integer("reps"),
   seconds: integer("seconds"),
   setType: text("set_type").notNull().default("WORKING"),
   measurement: text("measurement").notNull().default("WORKING"),
-  exerciseId: integer("exercise_id").references(() => exercises.id),
-  setSchemeId: integer("set_scheme_id").references(() => setSchemes.id),
+  exerciseId: text("exercise_id").references(() => exercises.id),
+  setSchemeId: text("set_scheme_id").references(() => setSchemes.id),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+// export const setEntriesRelations = relations(setEntries, ({ one }) => ({
+//   exercise: one(exercises),
+//   setScheme: one(setSchemes),
+// }));

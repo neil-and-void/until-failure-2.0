@@ -1,3 +1,10 @@
 import { createContext } from "react";
+import { Routines } from "../database/models/routines";
 
-export const DatabaseContext = createContext({} as any);
+type DatabaseModels = {
+  db: {
+    routines: Routines;
+  };
+};
+
+export const DatabaseContext = createContext<DatabaseModels>({} as any);

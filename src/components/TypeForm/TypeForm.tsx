@@ -169,7 +169,7 @@ const MeasurementTypeForm = ({
 };
 
 interface TypeFormProps {
-  routineId: string;
+  routineId?: string;
 }
 
 const TypeForm = ({ routineId }: TypeFormProps) => {
@@ -185,7 +185,7 @@ const TypeForm = ({ routineId }: TypeFormProps) => {
     const { setType, measurement, targetReps } = updatedSetScheme;
   };
 
-  if (editSetSchemeModalState.setScheme === null) {
+  if (!routineId || editSetSchemeModalState.setScheme === null) {
     return (
       <View>
         <Text className="text-white">set scheme is null</Text>

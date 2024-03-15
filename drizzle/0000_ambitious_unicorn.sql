@@ -1,8 +1,8 @@
 CREATE TABLE `exercise_routines` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`active` integer NOT NULL,
-	`routine_id` integer,
+	`routine_id` text NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`deleted_at` integer,
@@ -10,19 +10,19 @@ CREATE TABLE `exercise_routines` (
 );
 --> statement-breakpoint
 CREATE TABLE `exercises` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`notes` text,
-	`routine_id` integer,
-	`exercise_routine_id` integer,
+	`workout_id` text,
+	`exercise_routine_id` text,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`deleted_at` integer,
-	FOREIGN KEY (`routine_id`) REFERENCES `routines`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`workout_id`) REFERENCES `workouts`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`exercise_routine_id`) REFERENCES `exercise_routines`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `routines` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`active` integer NOT NULL,
 	`created_at` integer NOT NULL,
@@ -31,14 +31,14 @@ CREATE TABLE `routines` (
 );
 --> statement-breakpoint
 CREATE TABLE `set_entries` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`weight` integer,
 	`reps` integer,
 	`seconds` integer,
 	`set_type` text DEFAULT 'WORKING' NOT NULL,
 	`measurement` text DEFAULT 'WORKING' NOT NULL,
-	`exercise_id` integer,
-	`set_scheme_id` integer,
+	`exercise_id` text,
+	`set_scheme_id` text,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`deleted_at` integer,
@@ -47,12 +47,12 @@ CREATE TABLE `set_entries` (
 );
 --> statement-breakpoint
 CREATE TABLE `set_schemes` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`target_reps` integer DEFAULT 0 NOT NULL,
 	`target_duration` integer DEFAULT 0 NOT NULL,
-	`set_type` integer DEFAULT 'WORKING' NOT NULL,
-	`measurement` integer DEFAULT 'WEIGHT' NOT NULL,
-	`exercise_routine_id` integer,
+	`set_type` text DEFAULT 'WORKING' NOT NULL,
+	`measurement` text DEFAULT 'WEIGHT' NOT NULL,
+	`exercise_routine_id` text,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`deleted_at` integer,
@@ -60,10 +60,10 @@ CREATE TABLE `set_schemes` (
 );
 --> statement-breakpoint
 CREATE TABLE `workouts` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`start` integer NOT NULL,
 	`end` integer,
-	`routine_id` integer,
+	`routine_id` text,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`deleted_at` integer,

@@ -1,15 +1,16 @@
 export type Routine = {
   id: string;
   name: string;
-  userId: string;
   active: boolean;
-  createdAt: string;
   exerciseRoutines: ExerciseRoutine[];
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 };
 
 export type CreateRoutine = Omit<
   Routine,
-  "id" | "exerciseRoutines" | "createAt" | "active"
+  "id" | "exerciseRoutines" | "active" | "createdAt" | "deletedAt" | "updatedAt"
 >;
 
 export type UpdateRoutine = {
@@ -22,6 +23,9 @@ export type ExerciseRoutine = {
   active: boolean;
   routineId: string;
   setSchemes: SetScheme[];
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 };
 
 export type UpdateExerciseRoutine = {
@@ -34,6 +38,9 @@ export type SetScheme = {
   measurement: MeasurementType;
   setType: SetType;
   exerciseRoutineId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 };
 
 export type CreateSetScheme = Omit<SetScheme, "id">;
@@ -46,7 +53,8 @@ export type MeasurementType =
   | "WEIGHT"
   | "DURATION"
   | "WEIGHTED_DURATION"
-  | "BODYWEIGHT";
+  | "BODYWEIGHT"
+  | "COUNTERWEIGHT";
 
 export enum EditSetSchemeModalType {
   measurementType = "MEASUREMENT_TYPE",

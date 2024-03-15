@@ -30,6 +30,13 @@ export default function AppLayout() {
           headerShown: false,
         }}
       />
+
+      <Tabs.Screen
+        name="stats"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Tabs>
   );
 }
