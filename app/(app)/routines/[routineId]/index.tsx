@@ -1,13 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import ExerciseRoutineList from "@until-failure-app/src/components/ExerciseRoutineList";
 import TypeForm from "@until-failure-app/src/components/TypeForm";
+import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import {
   EditSetSchemeModalContext,
   EditSetSchemeModalState,
 } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
-import { Routine } from "@until-failure-app/src/types";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { Button, Modal, View } from "react-native";
+import { useContext, useState } from "react";
+import { Button, Modal, Text, View } from "react-native";
 
 enum Mode {
   Edit = "EDIT",
@@ -37,6 +38,7 @@ const EditButton = ({ mode, onPress }: EditButtonProps) => {
 };
 
 function ViewRoutine() {
+  const { db } = useContext(DatabaseContext);
   const [editMode, setEditMode] = useState<Mode>(Mode.View);
   const [editSetSchemeState, setEditSetSchemeState] = useState<EditSetSchemeModalState>({
     setScheme: null,
@@ -46,14 +48,10 @@ function ViewRoutine() {
 
   const { routineId } = useLocalSearchParams();
 
-  const routine = {
-    id: "1234",
-    name: "Routine",
-    userId: "userid",
-    active: true,
-    createdAt: "idk",
-    exerciseRoutines: [],
-  } as Routine;
+  const { data: routine, isLoading: routineLoading } = useQuery({
+    queryKey: ["routine", routineId],
+    queryFn: () => db.routines.getRoutine(routineId as string),
+  });
 
   return (
     <EditSetSchemeModalContext.Provider
@@ -70,7 +68,7 @@ function ViewRoutine() {
             headerRight: () => <EditButton mode={editMode} onPress={setEditMode} />,
           }}
         />
-        <ExerciseRoutineList routine={routine} loading={false} />
+        <ExerciseRoutineList routine={routine} loading={routineLoading} />
         <View className="justify-center items-center flex-1 flex flex-col">
           <Modal
             visible={editSetSchemeState.isOpen}
@@ -79,7 +77,7 @@ function ViewRoutine() {
           >
             <View className="justify-center items-center flex-1 flex flex-col bg-black/75">
               <View className="flex flex-col justify-center items-center bg-secondary-800 p-4 rounded-lg">
-                <TypeForm routineId={routine.id} />
+                <TypeForm routineId={routine?.id} />
               </View>
             </View>
           </Modal>

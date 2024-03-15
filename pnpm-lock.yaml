@@ -92,6 +92,9 @@ importers:
       react-native-swipe-list-view:
         specifier: ^3.2.9
         version: 3.2.9(prop-types@15.8.1)(react-native@0.73.2)(react@18.2.0)
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
     devDependencies:
       '@babel/core':
         specifier: ^7.20.0
@@ -102,6 +105,9 @@ importers:
       '@types/react':
         specifier: ~18.2.14
         version: 18.2.14
+      '@types/uuid':
+        specifier: ^9.0.8
+        version: 9.0.8
       drizzle-kit:
         specifier: ^0.20.14
         version: 0.20.14
@@ -3508,6 +3514,10 @@ packages:
   /@types/stack-utils@2.0.3:
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
     dev: false
+
+  /@types/uuid@9.0.8:
+    resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
+    dev: true
 
   /@types/yargs-parser@21.0.3:
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -10062,6 +10072,11 @@ packages:
 
   /uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+    dev: false
+
+  /uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
     dev: false
 
