@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import ExerciseRoutineList from "@until-failure-app/src/components/ExerciseRoutineList";
+import { Routine } from "@until-failure-app/src/components/Routine";
 import TypeForm from "@until-failure-app/src/components/TypeForm";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import {
@@ -8,7 +8,7 @@ import {
 } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useContext, useState } from "react";
-import { Button, Modal, Text, View } from "react-native";
+import { Button, Modal, View } from "react-native";
 
 enum Mode {
   Edit = "EDIT",
@@ -68,7 +68,9 @@ function ViewRoutine() {
             headerRight: () => <EditButton mode={editMode} onPress={setEditMode} />,
           }}
         />
-        <ExerciseRoutineList routine={routine} loading={routineLoading} />
+
+        <Routine routine={routine} loading={routineLoading} />
+
         <View className="justify-center items-center flex-1 flex flex-col">
           <Modal
             visible={editSetSchemeState.isOpen}

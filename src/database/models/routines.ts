@@ -1,4 +1,4 @@
-import { CreateRoutine, Routine, UpdateRoutine } from "@until-failure-app/src/types";
+import { CreateRoutine, MeasurementType, Routine, SetType, UpdateRoutine } from "@until-failure-app/src/types";
 import { eq } from "drizzle-orm";
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import * as Crypto from "expo-crypto";
@@ -31,21 +31,7 @@ export class Routines {
 
     return routineList.map(routine => {
       const exerciseRoutines = routine.exerciseRoutines.map((exerciseRoutine) => {
-        const setSchemes = exerciseRoutine.setSchemes.map((setScheme) => ({
-          id: exerciseRoutine.id,
-          targetReps: setScheme.targetReps,
-          targetDuration: setScheme.targetDuration,
-          setType: setScheme.setType,
-          measurement: setScheme.measurement,
-          exerciseRoutineId: setScheme.exerciseRoutineId,
-          routineId: exerciseRoutine.routineId,
-          createdAt: exerciseRoutine.createdAt,
-          updatedAt: exerciseRoutine.updatedAt,
-          deletedAt: exerciseRoutine.deletedAt,
-        }));
-
         return {
-          setSchemes,
           id: exerciseRoutine.id,
           name: exerciseRoutine.name,
           active: exerciseRoutine.active,
@@ -53,6 +39,7 @@ export class Routines {
           createdAt: exerciseRoutine.createdAt,
           updatedAt: exerciseRoutine.updatedAt,
           deletedAt: exerciseRoutine.deletedAt,
+          setSchemes: [], // empty to satisfy type
         };
       });
 
@@ -68,16 +55,56 @@ export class Routines {
     });
   }
 
-  async getRoutine(id: string) {
+  async getRoutine(id: string): Promise<Routine> {
     const routine = await this.db.query.routines.findFirst({
       where: eq(routines.id, id),
       with: { exerciseRoutines: { with: { setSchemes: true } } },
     });
 
-    return routine;
+    if (!routine) {
+      throw new Error("could not find routine");
+    }
+
+    const exerciseRoutines = routine?.exerciseRoutines.map(exerciseRoutine => {
+      const setSchemes = exerciseRoutine.setSchemes.map(setScheme => {
+        return {
+          id: setScheme.id,
+          createdAt: setScheme.createdAt,
+          deletedAt: setScheme.deletedAt,
+          updatedAt: setScheme.updatedAt,
+          targetReps: setScheme.targetReps,
+          targetDuration: setScheme.targetDuration,
+          setType: setScheme.setType as SetType,
+          measurement: setScheme.measurement as MeasurementType,
+          exerciseRoutineId: setScheme.exerciseRoutineId,
+        };
+      });
+
+      return {
+        id: exerciseRoutine.id,
+        name: exerciseRoutine.name,
+        active: exerciseRoutine.active,
+        routineId: exerciseRoutine.routineId,
+        createdAt: exerciseRoutine.createdAt,
+        updatedAt: exerciseRoutine.updatedAt,
+        deletedAt: exerciseRoutine.deletedAt,
+        setSchemes,
+      };
+    });
+
+    return {
+      id: routine.id,
+      name: routine.name,
+      active: routine.active,
+      createdAt: routine.createdAt,
+      updatedAt: routine.updatedAt,
+      deletedAt: routine.deletedAt,
+      exerciseRoutines,
+    };
   }
 
-  async updateRoutines(routine: UpdateRoutine) {
+  async updateRoutine(routine: UpdateRoutine) {
+    return await this.db.update(routines).set({ name: routine.name });
   }
 
   async deleteRoutine(id: string) {

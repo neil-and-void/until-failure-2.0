@@ -1,5 +1,9 @@
-import { ExerciseRoutine as ExerciseRoutineType } from "@until-failure-app/src/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
+import { ExerciseRoutine as ExerciseRoutineType, UpdateExerciseRoutine } from "@until-failure-app/src/types";
 import clsx from "clsx";
+import debounce from "lodash.debounce";
+import { useContext, useState } from "react";
 import { Pressable, Text, TextInput as RNTextInput, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import Button from "../Button";
@@ -10,14 +14,37 @@ interface ExerciseRoutineProps {
 }
 
 const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
+  const { db } = useContext(DatabaseContext);
+  const queryClient = useQueryClient();
+  const [name, setName] = useState(exerciseRoutine.name);
+
+  const { mutate: updateExerciseRoutineMutation } = useMutation({
+    mutationFn: (updatedExerciseRoutine: UpdateExerciseRoutine) =>
+      db.exerciseRoutines.updateExerciseRoutine(updatedExerciseRoutine),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["routine", exerciseRoutine.routineId],
+      });
+    },
+  });
+
+  const debouncedUpdateExerciseRoutine = debounce((updatedExerciseRoutine: UpdateExerciseRoutine) => {
+    updateExerciseRoutineMutation(updatedExerciseRoutine);
+  }, 500);
+
+  const updateExerciseRoutine = (name: string) => {
+    setName(name);
+    debouncedUpdateExerciseRoutine({ name, id: exerciseRoutine.id });
+  };
+
   return (
     <View className="pb-6">
       <View className="pb-2 px-4">
         <RNTextInput
-          value={exerciseRoutine.name}
+          value={name}
           className="text-2xl text-white"
           onChangeText={(name) => {
-            console.log(name);
+            updateExerciseRoutine(name);
           }}
         />
         <Text className="text-secondary-300">
