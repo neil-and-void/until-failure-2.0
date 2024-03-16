@@ -52,7 +52,7 @@ export type SetScheme = {
 
 export type NewSetScheme = Omit<SetScheme, "id" | "createdAt" | "updatedAt" | "deletedAt">;
 
-export type UpdateSetScheme = Omit<SetScheme, "id" | "exerciseRoutineId">;
+export type UpdateSetScheme = Omit<SetScheme, "exerciseRoutineId" | "createdAt" | "updatedAt" | "deletedAt">;
 
 export type SetType = "WARMUP" | "WORKING" | "DROP" | "SUPER";
 

@@ -19,12 +19,12 @@ const SetSchemeWeightInput = ({
   ...props
 }: SetSchemeWeightInputProps) => {
   if (measurementType === "WEIGHT") {
-    return <TextInput keyboardType="number-pad" {...props} />;
+    return <TextInput placeholder="weight" keyboardType="number-pad" {...props} />;
   } else if (measurementType === "WEIGHTED_DURATION") {
     return (
       <View className="flex flex-row">
-        <TextInput keyboardType="number-pad" {...props} />
-        <TextInput keyboardType="number-pad" {...props} />
+        <TextInput placeholder="seconds" keyboardType="number-pad" {...props} />
+        <TextInput placeholder="weight" keyboardType="number-pad" {...props} />
       </View>
     );
   } else if (measurementType === "BODYWEIGHT") {
@@ -41,7 +41,7 @@ const SetSchemeWeightInput = ({
   } else if (measurementType === "DURATION") {
     return (
       <>
-        <TextInput keyboardType="number-pad" {...props} />
+        <TextInput placeholder="seconds" keyboardType="number-pad" {...props} />
       </>
     );
   } else {

@@ -1,4 +1,5 @@
-import { NewSetScheme } from "@until-failure-app/src/types";
+import { NewSetScheme, UpdateSetScheme } from "@until-failure-app/src/types";
+import { eq } from "drizzle-orm";
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import * as Crypto from "expo-crypto";
 import * as schema from "../schema";
@@ -24,5 +25,16 @@ export class SetSchemes {
       updatedAt: now,
       deletedAt: null,
     });
+  }
+
+  async updateSetScheme(updatedSetScheme: UpdateSetScheme) {
+    const now = new Date();
+
+    return await this.db.update(setSchemes).set({
+      targetReps: updatedSetScheme.targetReps,
+      measurement: updatedSetScheme.measurement,
+      setType: updatedSetScheme.setType,
+      updatedAt: now,
+    }).where(eq(setSchemes.id, updatedSetScheme.id));
   }
 }

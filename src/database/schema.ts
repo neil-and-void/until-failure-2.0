@@ -32,8 +32,8 @@ export const exerciseRoutinesRelations = relations(exerciseRoutines, ({ one, man
 
 export const setSchemes = sqliteTable("set_schemes", {
   id: text("id").primaryKey(),
-  targetReps: integer("target_reps").notNull().default(0),
-  targetDuration: integer("target_duration").notNull().default(0),
+  targetReps: integer("target_reps"),
+  targetDuration: integer("target_duration"),
   setType: text("set_type").notNull().default("WORKING"),
   measurement: text("measurement").notNull().default("WEIGHT"),
   exerciseRoutineId: text("exercise_routine_id").references(() => exerciseRoutines.id).notNull(),

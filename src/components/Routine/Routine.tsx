@@ -16,7 +16,6 @@ export const Routine = ({ routine, loading }: RoutineProps) => {
       </View>
     );
   }
-  console.log(routine);
 
   return <ExerciseRoutineList routine={routine} loading={loading} />;
 };

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import EditSetScheme from "@until-failure-app/src/components/EditSetScheme";
 import { Routine } from "@until-failure-app/src/components/Routine";
-import TypeForm from "@until-failure-app/src/components/TypeForm";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import {
   EditSetSchemeModalContext,
@@ -79,7 +79,7 @@ function ViewRoutine() {
           >
             <View className="justify-center items-center flex-1 flex flex-col bg-black/75">
               <View className="flex flex-col justify-center items-center bg-secondary-800 p-4 rounded-lg">
-                <TypeForm routineId={routine?.id} />
+                <EditSetScheme routineId={routine?.id} />
               </View>
             </View>
           </Modal>
