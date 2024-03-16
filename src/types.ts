@@ -50,7 +50,7 @@ export type SetScheme = {
   deletedAt: Date | null;
 };
 
-export type CreateSetScheme = Omit<SetScheme, "id">;
+export type NewSetScheme = Omit<SetScheme, "id" | "createdAt" | "updatedAt" | "deletedAt">;
 
 export type UpdateSetScheme = Omit<SetScheme, "id" | "exerciseRoutineId">;
 

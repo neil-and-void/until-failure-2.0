@@ -1,7 +1,7 @@
 import migrations from "@until-failure-app/drizzle/migrations";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import database from "@until-failure-app/src/database";
-import { ExerciseRoutines, Routines } from "@until-failure-app/src/database/models";
+import { ExerciseRoutines, Routines, SetSchemes } from "@until-failure-app/src/database/models";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { ReactNode, useMemo } from "react";
 import { Text, View } from "react-native";
@@ -18,6 +18,7 @@ const DatabaseProvider = ({ children }: DatabaseProviderProps) => {
       db: {
         routines: new Routines(database),
         exerciseRoutines: new ExerciseRoutines(database),
+        setSchemes: new SetSchemes(database),
       },
     };
   }, []);

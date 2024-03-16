@@ -1,9 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
-import { ExerciseRoutine as ExerciseRoutineType, UpdateExerciseRoutine } from "@until-failure-app/src/types";
+import { exerciseRoutines } from "@until-failure-app/src/database/schema";
+import {
+  ExerciseRoutine as ExerciseRoutineType,
+  NewSetScheme,
+  UpdateExerciseRoutine,
+} from "@until-failure-app/src/types";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Pressable, Text, TextInput as RNTextInput, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import Button from "../Button";
@@ -28,9 +33,21 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
     },
   });
 
-  const debouncedUpdateExerciseRoutine = debounce((updatedExerciseRoutine: UpdateExerciseRoutine) => {
-    updateExerciseRoutineMutation(updatedExerciseRoutine);
-  }, 500);
+  const { mutate: createSetSchemeMutation } = useMutation({
+    mutationFn: (newSetScheme: NewSetScheme) => db.setSchemes.createSetScheme(newSetScheme),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["routine", exerciseRoutine.routineId],
+      });
+    },
+  });
+
+  const debouncedUpdateExerciseRoutine = useCallback(
+    debounce((updatedExerciseRoutine: UpdateExerciseRoutine) => {
+      updateExerciseRoutineMutation(updatedExerciseRoutine);
+    }, 500),
+    [],
+  );
 
   const updateExerciseRoutine = (name: string) => {
     setName(name);
@@ -88,7 +105,16 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
       </View>
 
       <View className="px-4">
-        <Button disabled={false} onPress={() => console.log("hi")}>
+        <Button
+          disabled={false}
+          onPress={() =>
+            createSetSchemeMutation({
+              targetReps: 0,
+              measurement: "WEIGHT",
+              setType: "WORKING",
+              exerciseRoutineId: exerciseRoutine.id,
+            })}
+        >
           <View className="flex flex-row justify-center">
             <Text className="text-white">Add set</Text>
           </View>

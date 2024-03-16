@@ -6,7 +6,7 @@ import {
   UpdateSetScheme,
 } from "@until-failure-app/src/types";
 import debounce from "lodash.debounce";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Pressable, Text, TextInputProps, View } from "react-native";
 import TextInput from "../TextInput";
 
@@ -67,11 +67,14 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
     String(setScheme.targetReps),
   );
 
-  const debouncedUpdateSetScheme = debounce(
-    (updatedSetScheme: UpdateSetScheme) => {
-      console.log(updatedSetScheme);
-    },
-    500,
+  const debouncedUpdateSetScheme = useCallback(
+    debounce(
+      (updatedSetScheme: UpdateSetScheme) => {
+        console.log(updatedSetScheme);
+      },
+      500,
+    ),
+    [],
   );
 
   const handleChangedTargetReps = (str: string) => {

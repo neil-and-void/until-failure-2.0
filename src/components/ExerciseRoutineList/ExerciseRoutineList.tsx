@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { NewExerciseRoutine, Routine, UpdateRoutine } from "@until-failure-app/src/types";
 import debounce from "lodash.debounce";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Image, Text, TextInput, View } from "react-native";
 import Button from "../Button/Button";
 import ExerciseRoutine from "../ExerciseRoutine/ExerciseRoutine";
@@ -43,9 +43,12 @@ const ExerciseRoutineList = ({
     },
   });
 
-  const debouncedUpdateRoutine = debounce((updatedRoutine: UpdateRoutine) => {
-    updateRoutineMutation(updatedRoutine);
-  }, 500);
+  const debouncedUpdateRoutine = useCallback(
+    debounce((updatedRoutine: UpdateRoutine) => {
+      updateRoutineMutation(updatedRoutine);
+    }, 500),
+    [],
+  );
 
   const updateRoutine = (name: string) => {
     setName(name);
