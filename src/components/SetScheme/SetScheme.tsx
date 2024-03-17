@@ -29,7 +29,7 @@ const SetSchemeTextFields = ({
   } else if (measurementType === "WEIGHTED_DURATION") {
     return (
       <>
-        <View className="basis-1/5 px-1 shrink-0">
+        <View className="basis-1/4 px-1 shrink-0">
           <TextInput placeholder="seconds" keyboardType="number-pad" {...props} />
         </View>
         <View className="basis-1/4 px-1 shrink-0">
