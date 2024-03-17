@@ -1,8 +1,8 @@
 import { CreateRoutine, MeasurementType, Routine, SetType, UpdateRoutine } from "@until-failure-app/src/types";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import * as Crypto from "expo-crypto";
-import { routines } from "../schema";
+import { exerciseRoutines as exerciseRoutinesTable, routines, setSchemes } from "../schema";
 import * as schema from "../schema";
 
 export class Routines {
@@ -57,8 +57,13 @@ export class Routines {
 
   async getRoutine(id: string): Promise<Routine> {
     const routine = await this.db.query.routines.findFirst({
-      where: eq(routines.id, id),
-      with: { exerciseRoutines: { with: { setSchemes: true } } },
+      where: and(eq(routines.id, id), isNull(routines.deletedAt)),
+      with: {
+        exerciseRoutines: {
+          where: isNull(exerciseRoutinesTable.deletedAt),
+          with: { setSchemes: { where: isNull(setSchemes.deletedAt) } },
+        },
+      },
     });
 
     if (!routine) {

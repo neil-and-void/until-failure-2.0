@@ -23,6 +23,19 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
   const queryClient = useQueryClient();
   const [name, setName] = useState(exerciseRoutine.name);
 
+  const { mutate: deleteSetScheme } = useMutation({
+    mutationFn: (id: string) => db.setSchemes.deleteSetScheme(id),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["routine", exerciseRoutine.routineId],
+      });
+    },
+    onError: (err) => {
+      // todo
+      console.log(err);
+    },
+  });
+
   const { mutate: updateExerciseRoutineMutation } = useMutation({
     mutationFn: (updatedExerciseRoutine: UpdateExerciseRoutine) =>
       db.exerciseRoutines.updateExerciseRoutine(updatedExerciseRoutine),
@@ -30,6 +43,9 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
       queryClient.invalidateQueries({
         queryKey: ["routine", exerciseRoutine.routineId],
       });
+    },
+    onError: (err) => {
+      console.log(err);
     },
   });
 
@@ -39,6 +55,9 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
       queryClient.invalidateQueries({
         queryKey: ["routine", exerciseRoutine.routineId],
       });
+    },
+    onError: (err) => {
+      console.log(err);
     },
   });
 
@@ -82,7 +101,10 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
               >
                 <Swipeable
                   renderRightActions={() => (
-                    <Pressable className="flex flex-col justify-center px-2">
+                    <Pressable
+                      className="flex flex-col justify-center px-2"
+                      onPress={() => deleteSetScheme(setScheme.id)}
+                    >
                       <Text className="text-delete">delete</Text>
                     </Pressable>
                   )}
@@ -109,7 +131,6 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
           disabled={false}
           onPress={() =>
             createSetSchemeMutation({
-              targetReps: 0,
               measurement: "WEIGHT",
               setType: "WORKING",
               exerciseRoutineId: exerciseRoutine.id,

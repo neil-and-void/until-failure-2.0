@@ -41,7 +41,8 @@ export type UpdateExerciseRoutine = Omit<
 
 export type SetScheme = {
   id: string;
-  targetReps: number;
+  targetReps: number | null;
+  targetDuration: number | null;
   measurement: MeasurementType;
   setType: SetType;
   exerciseRoutineId: string;
@@ -50,7 +51,10 @@ export type SetScheme = {
   deletedAt: Date | null;
 };
 
-export type NewSetScheme = Omit<SetScheme, "id" | "createdAt" | "updatedAt" | "deletedAt">;
+export type NewSetScheme = Omit<
+  SetScheme,
+  "id" | "targetReps" | "targetDuration" | "createdAt" | "updatedAt" | "deletedAt"
+>;
 
 export type UpdateSetScheme = Omit<SetScheme, "exerciseRoutineId" | "createdAt" | "updatedAt" | "deletedAt">;
 

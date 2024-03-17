@@ -48,8 +48,8 @@ CREATE TABLE `set_entries` (
 --> statement-breakpoint
 CREATE TABLE `set_schemes` (
 	`id` text PRIMARY KEY NOT NULL,
-	`target_reps` integer DEFAULT 0 NOT NULL,
-	`target_duration` integer DEFAULT 0 NOT NULL,
+	`target_reps` integer,
+	`target_duration` integer,
 	`set_type` text DEFAULT 'WORKING' NOT NULL,
 	`measurement` text DEFAULT 'WEIGHT' NOT NULL,
 	`exercise_routine_id` text NOT NULL,

@@ -17,7 +17,6 @@ export class SetSchemes {
 
     return await this.db.insert(setSchemes).values({
       id: Crypto.randomUUID(),
-      targetReps: newSetScheme.targetReps,
       measurement: newSetScheme.measurement,
       setType: newSetScheme.setType,
       exerciseRoutineId: newSetScheme.exerciseRoutineId,
@@ -36,5 +35,13 @@ export class SetSchemes {
       setType: updatedSetScheme.setType,
       updatedAt: now,
     }).where(eq(setSchemes.id, updatedSetScheme.id));
+  }
+
+  async deleteSetScheme(id: string) {
+    const now = new Date();
+
+    return await this.db.update(setSchemes).set({
+      deletedAt: now,
+    }).where(eq(setSchemes.id, id));
   }
 }
