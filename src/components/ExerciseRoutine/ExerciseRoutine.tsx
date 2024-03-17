@@ -1,6 +1,7 @@
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
-import { exerciseRoutines } from "@until-failure-app/src/database/schema";
+import { colors } from "@until-failure-app/src/theme";
 import {
   ExerciseRoutine as ExerciseRoutineType,
   NewSetScheme,
@@ -8,11 +9,14 @@ import {
 } from "@until-failure-app/src/types";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
-import { useCallback, useContext, useState } from "react";
-import { Pressable, Text, TextInput as RNTextInput, View } from "react-native";
+import { styled } from "nativewind";
+import { useCallback, useContext, useRef, useState } from "react";
+import { Button as RNButton, Pressable, Text, TextInput as RNTextInput, TouchableOpacity, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import Button from "../Button";
 import SetScheme from "../SetScheme";
+
+const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
 
 interface ExerciseRoutineProps {
   exerciseRoutine: ExerciseRoutineType;
@@ -21,6 +25,7 @@ interface ExerciseRoutineProps {
 const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
   const { db } = useContext(DatabaseContext);
   const queryClient = useQueryClient();
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [name, setName] = useState(exerciseRoutine.name);
 
   const { mutate: deleteSetScheme } = useMutation({
@@ -32,7 +37,23 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
     },
     onError: (err) => {
       // todo
+      console.log(err, exerciseRoutine);
+    },
+  });
+
+  const { mutate: deleteExerciseRoutine } = useMutation({
+    mutationFn: (id: string) => db.exerciseRoutines.deleteExerciseRoutine(id),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["routine", exerciseRoutine.routineId],
+      });
+    },
+    onError: (err) => {
+      // todo
       console.log(err);
+    },
+    onSuccess: () => {
+      bottomSheetModalRef.current?.close();
     },
   });
 
@@ -73,20 +94,29 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
     debouncedUpdateExerciseRoutine({ name, id: exerciseRoutine.id });
   };
 
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const handleSheetChanges = useCallback((index: number) => {}, []);
+
   return (
     <View className="pb-6">
-      <View className="pb-2 px-4">
-        <RNTextInput
-          value={name}
-          className="text-2xl text-white"
-          onChangeText={(name) => {
-            updateExerciseRoutine(name);
-          }}
-        />
-        <Text className="text-secondary-300">
-          {exerciseRoutine.setSchemes.length} set
-          {exerciseRoutine.setSchemes.length === 1 ? "" : "s"}
-        </Text>
+      <View className="flex flex-row items-center">
+        <View className="pb-2 px-4">
+          <RNTextInput
+            value={name}
+            className="text-2xl text-white flex-1"
+            onChangeText={(name) => {
+              updateExerciseRoutine(name);
+            }}
+          />
+          <Text className="text-secondary-300">
+            {exerciseRoutine.setSchemes.length} set
+            {exerciseRoutine.setSchemes.length === 1 ? "" : "s"}
+          </Text>
+        </View>
+        <RNButton title="delete" onPress={() => handlePresentModalPress()} />
       </View>
 
       <View className="pb-2">
@@ -141,6 +171,53 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
           </View>
         </Button>
       </View>
+
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={["25%"]}
+        onChange={handleSheetChanges}
+        backdropComponent={(backdropProps) => (
+          <StyledBottomSheetBackdrop
+            className="bg-red-400"
+            opacity={9}
+            enableTouchThrough={false}
+            {...backdropProps}
+          />
+        )}
+        backgroundStyle={{
+          backgroundColor: colors.secondary["900"],
+        }}
+        style={{
+          shadowColor: "#ff0000",
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          elevation: 5,
+        }}
+      >
+        <View className="p-4 gap-4">
+          <View className=" bg-secondary-800 rounded-2xl">
+            <TouchableOpacity className="flex flex-row justify-center p-4">
+              <Text className="text-white text-lg font-medium">Move to inactive</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className=" bg-secondary-800 rounded-2xl">
+            <TouchableOpacity
+              className="flex flex-row justify-center p-4"
+              onPress={() => {
+                deleteExerciseRoutine(exerciseRoutine.id);
+              }}
+            >
+              <Text className="text-error text-lg font-medium">delete</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </BottomSheetModal>
     </View>
   );
 };

@@ -98,7 +98,9 @@ const ExerciseRoutineList = ({
           </View>
         }
         data={routine.exerciseRoutines}
-        renderItem={({ item: exerciseRoutine }) => <ExerciseRoutine exerciseRoutine={exerciseRoutine} />}
+        renderItem={({ item: exerciseRoutine }) => (
+          <ExerciseRoutine key={exerciseRoutine.id} exerciseRoutine={exerciseRoutine} />
+        )}
         estimatedItemSize={200}
       />
     </View>

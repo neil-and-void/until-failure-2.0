@@ -1,8 +1,16 @@
 import { CreateRoutine, MeasurementType, Routine, SetType, UpdateRoutine } from "@until-failure-app/src/types";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import * as Crypto from "expo-crypto";
-import { exerciseRoutines as exerciseRoutinesTable, routines, setSchemes } from "../schema";
+import {
+  exerciseRoutines,
+  exerciseRoutines as exerciseRoutinesTable,
+  exercises,
+  routines,
+  setEntries as setEntriesTable,
+  setSchemes,
+  workouts,
+} from "../schema";
 import * as schema from "../schema";
 
 export class Routines {
@@ -113,6 +121,37 @@ export class Routines {
   }
 
   async deleteRoutine(id: string) {
-    const a = new Date();
+    return await this.db.transaction(async (tx) => {
+      await tx.delete(routines).where(eq(routines.id, id));
+
+      const deletedWorkouts = await tx.delete(workouts).where(eq(workouts.routineId, id))
+        .returning({
+          id: workouts.id,
+        });
+      const deletedWorkoutIds = deletedWorkouts.map(deletedWorkout => deletedWorkout.id);
+
+      // delete exercises
+      const deletedExercises = await tx.delete(exercises).where(inArray(exercises.workoutId, deletedWorkoutIds))
+        .returning({
+          id: exercises.id,
+        });
+      const deletedExerciseIds = deletedExercises.map(deletedExercise => deletedExercise.id);
+
+      // delete set entries
+      await tx.delete(setEntriesTable).where(
+        inArray(setEntriesTable.exerciseId, deletedExerciseIds),
+      );
+
+      const deletedExerciseRoutines = await tx.delete(exerciseRoutines).where(eq(exerciseRoutines.routineId, id))
+        .returning({
+          id: exerciseRoutines.id,
+        });
+
+      const deletedExerciseRoutineIds = deletedExerciseRoutines.map(deletedExerciseRoutine =>
+        deletedExerciseRoutine.id
+      );
+
+      await tx.delete(setSchemes).where(inArray(setSchemes.exerciseRoutineId, deletedExerciseRoutineIds));
+    });
   }
 }
