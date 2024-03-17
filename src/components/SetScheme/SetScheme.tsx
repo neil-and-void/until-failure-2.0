@@ -21,36 +21,44 @@ const SetSchemeTextFields = ({
   ...props
 }: SetSchemeWeightInputProps) => {
   if (measurementType === "WEIGHT") {
-    return <TextInput placeholder="target reps" keyboardType="number-pad" {...props} />;
+    return (
+      <View className="basis-1/2 px-1 shrink-0">
+        <TextInput placeholder="reps" keyboardType="number-pad" {...props} />
+      </View>
+    );
   } else if (measurementType === "WEIGHTED_DURATION") {
     return (
-      <View className="flex flex-row">
-        <TextInput placeholder="seconds" keyboardType="number-pad" {...props} />
-        <TextInput placeholder="target reps" keyboardType="number-pad" {...props} />
-      </View>
+      <>
+        <View className="basis-1/5 px-1 shrink-0">
+          <TextInput placeholder="seconds" keyboardType="number-pad" {...props} />
+        </View>
+        <View className="basis-1/4 px-1 shrink-0">
+          <TextInput placeholder="reps" keyboardType="number-pad" {...props} />
+        </View>
+      </>
     );
   } else if (measurementType === "BODYWEIGHT") {
     return (
-      <>
+      <View className="basis-1/2 px-1 shrink-0">
         <TextInput
           editable={false}
           selectTextOnFocus={false}
-          placeholder="target reps"
+          placeholder="reps"
           {...props}
         />
-      </>
+      </View>
     );
   } else if (measurementType === "DURATION") {
     return (
-      <>
+      <View className="basis-1/2 px-1 shrink-0">
         <TextInput placeholder="seconds" keyboardType="number-pad" {...props} />
-      </>
+      </View>
     );
   } else {
     return (
-      <>
+      <View className="basis-1/2 px-1 shrink-0">
         <TextInput {...props} />
-      </>
+      </View>
     );
   }
 };
@@ -159,14 +167,12 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
         </Pressable>
       </View>
 
-      <View className="g-1 pl-1 shrink-0 basis-1/2">
-        <SetSchemeTextFields
-          value={targetReps}
-          measurementType={setScheme.measurement}
-          onBlur={() => targetReps.length === 0 && handleChangedTargetReps("")}
-          onChangeText={(text) => handleChangedTargetReps(text)}
-        />
-      </View>
+      <SetSchemeTextFields
+        value={targetReps}
+        measurementType={setScheme.measurement}
+        onBlur={() => targetReps.length === 0 && handleChangedTargetReps("")}
+        onChangeText={(text) => handleChangedTargetReps(text)}
+      />
     </View>
   );
 };
