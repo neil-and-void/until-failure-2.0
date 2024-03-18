@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const routines = sqliteTable("routines", {
   id: text("id").primaryKey(),
@@ -82,7 +82,7 @@ export const exercisesRelations = relations(exercises, ({ one, many }) => ({
 
 export const setEntries = sqliteTable("set_entries", {
   id: text("id").primaryKey(),
-  weight: integer("weight"),
+  weight: real("weight"),
   reps: integer("reps"),
   seconds: integer("seconds"),
   setType: text("set_type").notNull().default("WORKING"),

@@ -4,7 +4,9 @@ import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext
 import { colors } from "@until-failure-app/src/theme";
 import {
   ExerciseRoutine as ExerciseRoutineType,
+  MeasurementType,
   NewSetScheme,
+  SetType,
   UpdateExerciseRoutine,
 } from "@until-failure-app/src/types";
 import clsx from "clsx";
@@ -161,8 +163,8 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
           disabled={false}
           onPress={() =>
             createSetSchemeMutation({
-              measurement: "WEIGHT",
-              setType: "WORKING",
+              measurement: MeasurementType.weight,
+              setType: SetType.working,
               exerciseRoutineId: exerciseRoutine.id,
             })}
         >

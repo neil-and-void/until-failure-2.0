@@ -58,20 +58,61 @@ export type NewSetScheme = Omit<
 
 export type UpdateSetScheme = Omit<SetScheme, "exerciseRoutineId" | "createdAt" | "updatedAt" | "deletedAt">;
 
-export type SetType = "WARMUP" | "WORKING" | "DROP" | "SUPER";
+export enum MeasurementType {
+  weight = "WEIGHT",
+  duration = "DURATION",
+  weightedDuration = "WEIGHTED_DURATION",
+  bodyweighjt = "BODYWEIGHT",
+  counterweight = "COUNTERWEIGHT",
+}
 
-export type MeasurementType =
-  | "WEIGHT"
-  | "DURATION"
-  | "WEIGHTED_DURATION"
-  | "BODYWEIGHT"
-  | "COUNTERWEIGHT";
+export enum SetType {
+  warmup = "WARMUP",
+  working = "WORKING",
+  drop = "DROP",
+  super = "SUPER",
+}
 
 export enum EditSetSchemeModalType {
   measurementType = "MEASUREMENT_TYPE",
   setType = "SET_TYPE",
 }
 
-// export interface Workout {}
-// export interface Exercise {}
-// export interface ExerciseSet {}
+export interface SetEntry {
+  id: string;
+  weight: number;
+  reps: number;
+  seconds: number;
+  setType: SetType;
+  measurement: MeasurementType;
+  exerciseId: string;
+  setSchemeId: string;
+  setScheme: SetScheme;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}
+
+export interface Exercise {
+  id: string;
+  notes: string;
+  workoutId: string;
+  exerciseRoutineId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  exerciseRoutine: ExerciseRoutine;
+  setEntries: SetEntry[];
+}
+
+export interface Workout {
+  id: string;
+  start: Date;
+  end: Date | null;
+  routineId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  routine: Routine;
+  exercises: Exercise[];
+}
