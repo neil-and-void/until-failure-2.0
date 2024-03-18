@@ -1,5 +1,13 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { EditSetSchemeModalContext } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
-import { EditSetSchemeModalType, MeasurementType, SetScheme, SetType } from "@until-failure-app/src/types";
+import {
+  EditSetSchemeModalType,
+  MeasurementType,
+  SetScheme,
+  SetType,
+  UpdateSetScheme,
+} from "@until-failure-app/src/types";
 import { useContext, useState } from "react";
 import { Button, Text, View } from "react-native";
 import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
@@ -168,21 +176,40 @@ const MeasurementTypeForm = ({
   );
 };
 
-interface TypeFormProps {
+interface EditSetSchemeProps {
   routineId?: string;
 }
 
-const TypeForm = ({ routineId }: TypeFormProps) => {
+const EditSetScheme = ({ routineId }: EditSetSchemeProps) => {
   const { editSetSchemeModalState, setEditSetSchemeModalState } = useContext(
     EditSetSchemeModalContext,
   );
+  const { db } = useContext(DatabaseContext);
+  const queryClient = useQueryClient();
+
+  const { mutate: updateSetSchemeMutation } = useMutation({
+    mutationFn: (updatedSetScheme: UpdateSetScheme) => db.setSchemes.updateSetScheme(updatedSetScheme),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["routine", routineId],
+      });
+    },
+    onSuccess: () => {
+      setIsOpen(false);
+    },
+  });
 
   const setIsOpen = (isOpen: boolean) => {
     setEditSetSchemeModalState({ ...editSetSchemeModalState, isOpen });
   };
 
-  const handleSave = (updatedSetScheme: SetScheme) => {
-    const { setType, measurement, targetReps } = updatedSetScheme;
+  const handleSave = (updatedSetScheme: UpdateSetScheme) => {
+    updateSetSchemeMutation({
+      id: updatedSetScheme.id,
+      targetReps: updatedSetScheme.targetReps,
+      measurement: updatedSetScheme.measurement,
+      setType: updatedSetScheme.setType,
+    });
   };
 
   if (!routineId || editSetSchemeModalState.setScheme === null) {
@@ -226,4 +253,4 @@ const TypeForm = ({ routineId }: TypeFormProps) => {
   }
 };
 
-export default TypeForm;
+export default EditSetScheme;

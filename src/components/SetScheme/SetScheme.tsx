@@ -1,3 +1,5 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { EditSetSchemeModalContext } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
 import {
   EditSetSchemeModalType,
@@ -6,7 +8,7 @@ import {
   UpdateSetScheme,
 } from "@until-failure-app/src/types";
 import debounce from "lodash.debounce";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Pressable, Text, TextInputProps, View } from "react-native";
 import TextInput from "../TextInput";
 
@@ -14,41 +16,49 @@ interface SetSchemeWeightInputProps extends TextInputProps {
   measurementType: MeasurementType;
 }
 
-const SetSchemeWeightInput = ({
+const SetSchemeTextFields = ({
   measurementType,
   ...props
 }: SetSchemeWeightInputProps) => {
   if (measurementType === "WEIGHT") {
-    return <TextInput keyboardType="number-pad" {...props} />;
+    return (
+      <View className="basis-1/2 px-1 shrink-0">
+        <TextInput placeholder="reps" keyboardType="number-pad" {...props} />
+      </View>
+    );
   } else if (measurementType === "WEIGHTED_DURATION") {
     return (
-      <View className="flex flex-row">
-        <TextInput keyboardType="number-pad" {...props} />
-        <TextInput keyboardType="number-pad" {...props} />
-      </View>
+      <>
+        <View className="basis-1/4 px-1 shrink-0">
+          <TextInput placeholder="seconds" keyboardType="number-pad" {...props} />
+        </View>
+        <View className="basis-1/4 px-1 shrink-0">
+          <TextInput placeholder="reps" keyboardType="number-pad" {...props} />
+        </View>
+      </>
     );
   } else if (measurementType === "BODYWEIGHT") {
     return (
-      <>
+      <View className="basis-1/2 px-1 shrink-0">
         <TextInput
           editable={false}
           selectTextOnFocus={false}
-          placeholder="bodyweight"
+          placeholder="reps"
           {...props}
         />
-      </>
+      </View>
     );
   } else if (measurementType === "DURATION") {
     return (
-      <>
-        <TextInput keyboardType="number-pad" {...props} />
-      </>
+      <View className="basis-1/2 px-1 shrink-0">
+        <TextInput placeholder="seconds" keyboardType="number-pad" {...props} />
+      </View>
     );
   } else {
     return (
-      <>
+      <View className="basis-1/2 px-1 shrink-0">
         <TextInput {...props} />
-      </>
+      </View>
     );
   }
 };
@@ -63,15 +73,35 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
     EditSetSchemeModalContext,
   );
 
+  const { db } = useContext(DatabaseContext);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: updateSetSchemeMutation } = useMutation({
+    mutationFn: (updatedSetScheme: UpdateSetScheme) => db.setSchemes.updateSetScheme(updatedSetScheme),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["routine", routineId],
+      });
+    },
+    onError: (err) => {
+      // todo
+      console.log(err);
+    },
+  });
+
   const [targetReps, setTargetReps] = useState<string>(
-    String(setScheme.targetReps),
+    String(setScheme.targetReps ?? ""),
   );
 
-  const debouncedUpdateSetScheme = debounce(
-    (updatedSetScheme: UpdateSetScheme) => {
-      console.log(updatedSetScheme);
-    },
-    500,
+  const debouncedUpdateSetScheme = useCallback(
+    debounce(
+      (updatedSetScheme: UpdateSetScheme) => {
+        updateSetSchemeMutation(updatedSetScheme);
+      },
+      500,
+    ),
+    [],
   );
 
   const handleChangedTargetReps = (str: string) => {
@@ -83,7 +113,7 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
 
     if (numStr.length === 0) {
       setTargetReps("");
-      debouncedUpdateSetScheme({ ...setScheme, targetReps: 0 });
+      debouncedUpdateSetScheme({ ...setScheme, targetReps: null });
       return;
     }
 
@@ -137,13 +167,12 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
         </Pressable>
       </View>
 
-      <View className="g-1 pl-1 shrink-0 basis-1/2">
-        <SetSchemeWeightInput
-          value={targetReps}
-          measurementType={setScheme.measurement}
-          onBlur={() => targetReps.length === 0 && handleChangedTargetReps("0")}
-        />
-      </View>
+      <SetSchemeTextFields
+        value={targetReps}
+        measurementType={setScheme.measurement}
+        onBlur={() => targetReps.length === 0 && handleChangedTargetReps("")}
+        onChangeText={(text) => handleChangedTargetReps(text)}
+      />
     </View>
   );
 };

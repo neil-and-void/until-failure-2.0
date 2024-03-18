@@ -1,27 +1,46 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useQuery } from "@tanstack/react-query";
-import CreateRoutine from "@until-failure-app/src/components/CreateRoutine/CreateRoutine";
-import RoutineList from "@until-failure-app/src/components/RoutineList";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { WorkoutList } from "@until-failure-app/src/components/WorkoutList/WorkoutList";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { colors } from "@until-failure-app/src/theme";
 import { Stack } from "expo-router";
 import { styled } from "nativewind";
 import { useCallback, useContext, useRef } from "react";
-import { Pressable, Text, View } from "react-native";
+import { FlatList, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
-
-export default function Routines() {
+export default function Workouts() {
   const { db } = useContext(DatabaseContext);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  // Queries
+  const queryClient = useQueryClient();
+
+  const { data: workouts, isLoading: getWorkoutsLoading } = useQuery({
+    queryKey: ["workouts"],
+    queryFn: () => db.workouts.getWorkouts(20),
+  });
+
   const { data: routines, isLoading: getRoutinesLoading } = useQuery({
     queryKey: ["routines"],
     queryFn: () => db.routines.getRoutines(),
   });
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const { mutate: createWorkout } = useMutation({
+    mutationFn: (routineId: string) => db.workouts.createWorkout(routineId),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["workouts"],
+      });
+    },
+    onError: (err) => {
+      // todo
+      console.log(err);
+    },
+    onSuccess: (newWorkout) => {
+      // todo
+      console.log("TODO go to the workouts list");
+    },
+  });
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -30,14 +49,15 @@ export default function Routines() {
   const handleSheetChanges = useCallback((index: number) => {}, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="px-4">
       <Stack.Screen
         options={{
           headerShown: false,
         }}
       />
+
       <View className="px-4 flex flex-row justify-between">
-        <Text className="text-white text-4xl self-start">Routines</Text>
+        <Text className="text-white text-4xl self-start">Workouts</Text>
         <Pressable
           onPress={() => handlePresentModalPress()}
           className="self-start"
@@ -46,12 +66,12 @@ export default function Routines() {
         </Pressable>
       </View>
 
-      <RoutineList routines={routines || []} loading={getRoutinesLoading} />
+      <WorkoutList workouts={workouts} loading={getWorkoutsLoading} />
 
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}
-        snapPoints={["92%"]}
+        snapPoints={["50%", "92%"]}
         onChange={handleSheetChanges}
         backdropComponent={(backdropProps) => (
           <StyledBottomSheetBackdrop
@@ -76,7 +96,22 @@ export default function Routines() {
           elevation: 5,
         }}
       >
-        <CreateRoutine onCreate={() => bottomSheetModalRef.current?.close()} />
+        <ScrollView className="p-4">
+          <View className="pb-2">
+            <Text className="text-white">Choose a routine to start</Text>
+          </View>
+          <View className="bg-secondary-800 rounded-2xl">
+            {routines?.map(routine => (
+              <TouchableOpacity
+                onPress={() => createWorkout(routine.id)}
+                className="flex flex-row justify-start p-4"
+                key={routine.id}
+              >
+                <Text className="text-white text-lg ">{routine.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       </BottomSheetModal>
     </SafeAreaView>
   );

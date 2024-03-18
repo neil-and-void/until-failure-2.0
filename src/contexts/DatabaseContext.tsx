@@ -1,9 +1,12 @@
 import { createContext } from "react";
-import { Routines } from "../database/models/routines";
+import { ExerciseRoutines, Routines, SetSchemes, Workouts } from "../database/models";
 
 type DatabaseModels = {
   db: {
     routines: Routines;
+    exerciseRoutines: ExerciseRoutines;
+    setSchemes: SetSchemes;
+    workouts: Workouts;
   };
 };
 

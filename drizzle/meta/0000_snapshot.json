@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "8777bb64-445d-47d0-8cbc-77528c5d0914",
+  "id": "d00b4930-79c0-4c53-960c-442056a5227e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "exercise_routines": {
@@ -341,17 +341,15 @@
           "name": "target_reps",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "notNull": false,
+          "autoincrement": false
         },
         "target_duration": {
           "name": "target_duration",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "notNull": false,
+          "autoincrement": false
         },
         "set_type": {
           "name": "set_type",
@@ -373,7 +371,7 @@
           "name": "exercise_routine_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -445,7 +443,7 @@
           "name": "routine_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {

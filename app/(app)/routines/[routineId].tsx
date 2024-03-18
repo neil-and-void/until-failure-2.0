@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import ExerciseRoutineList from "@until-failure-app/src/components/ExerciseRoutineList";
-import TypeForm from "@until-failure-app/src/components/TypeForm";
+import EditSetScheme from "@until-failure-app/src/components/EditSetScheme";
+import { Routine } from "@until-failure-app/src/components/Routine";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import {
   EditSetSchemeModalContext,
@@ -8,7 +8,7 @@ import {
 } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useContext, useState } from "react";
-import { Button, Modal, Text, View } from "react-native";
+import { Button, Modal, View } from "react-native";
 
 enum Mode {
   Edit = "EDIT",
@@ -68,7 +68,9 @@ function ViewRoutine() {
             headerRight: () => <EditButton mode={editMode} onPress={setEditMode} />,
           }}
         />
-        <ExerciseRoutineList routine={routine} loading={routineLoading} />
+
+        <Routine routine={routine} loading={routineLoading} />
+
         <View className="justify-center items-center flex-1 flex flex-col">
           <Modal
             visible={editSetSchemeState.isOpen}
@@ -77,7 +79,7 @@ function ViewRoutine() {
           >
             <View className="justify-center items-center flex-1 flex flex-col bg-black/75">
               <View className="flex flex-col justify-center items-center bg-secondary-800 p-4 rounded-lg">
-                <TypeForm routineId={routine?.id} />
+                <EditSetScheme routineId={routine?.id} />
               </View>
             </View>
           </Modal>
