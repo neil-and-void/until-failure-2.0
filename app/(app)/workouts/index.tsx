@@ -3,9 +3,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { WorkoutList } from "@until-failure-app/src/components/WorkoutList/WorkoutList";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { colors } from "@until-failure-app/src/theme";
+import { Stack } from "expo-router";
 import { styled } from "nativewind";
 import { useCallback, useContext, useRef } from "react";
-import { FlatList, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
 export default function Workouts() {
@@ -49,6 +50,12 @@ export default function Workouts() {
 
   return (
     <SafeAreaView className="px-4">
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
+
       <View className="px-4 flex flex-row justify-between">
         <Text className="text-white text-4xl self-start">Workouts</Text>
         <Pressable
@@ -68,10 +75,11 @@ export default function Workouts() {
         onChange={handleSheetChanges}
         backdropComponent={(backdropProps) => (
           <StyledBottomSheetBackdrop
-            className="bg-red-400"
+            {...backdropProps}
+            disappearsOnIndex={-1}
+            className="bg-black/80"
             opacity={9}
             enableTouchThrough={false}
-            {...backdropProps}
           />
         )}
         backgroundStyle={{
@@ -88,21 +96,22 @@ export default function Workouts() {
           elevation: 5,
         }}
       >
-        <View className="p-4">
+        <ScrollView className="p-4">
           <View className="pb-2">
             <Text className="text-white">Choose a routine to start</Text>
           </View>
-          <FlatList
-            className="bg-secondary-800 rounded-2xl"
-            data={routines || []}
-            renderItem={({ item: routine }) => (
-              <TouchableOpacity onPress={() => createWorkout(routine.id)} className="flex flex-row justify-start p-4">
+          <View className="bg-secondary-800 rounded-2xl">
+            {routines?.map(routine => (
+              <TouchableOpacity
+                onPress={() => createWorkout(routine.id)}
+                className="flex flex-row justify-start p-4"
+                key={routine.id}
+              >
                 <Text className="text-white text-lg ">{routine.name}</Text>
               </TouchableOpacity>
-            )}
-            keyExtractor={(routine) => routine.id}
-          />
-        </View>
+            ))}
+          </View>
+        </ScrollView>
       </BottomSheetModal>
     </SafeAreaView>
   );

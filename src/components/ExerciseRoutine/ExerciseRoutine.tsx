@@ -104,8 +104,8 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
 
   return (
     <View className="pb-6">
-      <View className="flex flex-row items-center">
-        <View className="pb-2 px-4">
+      <View className="flex flex-row items-center justify-between px-4">
+        <View>
           <RNTextInput
             value={name}
             className="text-2xl text-white flex-1"
@@ -118,7 +118,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
             {exerciseRoutine.setSchemes.length === 1 ? "" : "s"}
           </Text>
         </View>
-        <RNButton title="delete" onPress={() => handlePresentModalPress()} />
+        <RNButton title="options" onPress={() => handlePresentModalPress()} />
       </View>
 
       <View className="pb-2">
@@ -181,10 +181,11 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
         onChange={handleSheetChanges}
         backdropComponent={(backdropProps) => (
           <StyledBottomSheetBackdrop
-            className="bg-red-400"
+            {...backdropProps}
+            disappearsOnIndex={-1}
+            className="bg-black/80"
             opacity={9}
             enableTouchThrough={false}
-            {...backdropProps}
           />
         )}
         backgroundStyle={{
@@ -201,10 +202,10 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
           elevation: 5,
         }}
       >
-        <View className="p-4 gap-4">
+        <View className="p-4 gap-2">
           <View className=" bg-secondary-800 rounded-2xl">
             <TouchableOpacity className="flex flex-row justify-center p-4">
-              <Text className="text-white text-lg font-medium">Move to inactive</Text>
+              <Text className="text-white text-md font-medium">Move to inactive</Text>
             </TouchableOpacity>
           </View>
 
@@ -215,7 +216,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
                 deleteExerciseRoutine(exerciseRoutine.id);
               }}
             >
-              <Text className="text-error text-lg font-medium">delete</Text>
+              <Text className="text-error text-md font-medium">delete</Text>
             </TouchableOpacity>
           </View>
         </View>

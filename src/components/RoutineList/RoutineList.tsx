@@ -75,17 +75,17 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
         onChange={handleSheetChanges}
         backdropComponent={(backdropProps) => (
           <StyledBottomSheetBackdrop
-            className="bg-red-400"
+            {...backdropProps}
+            disappearsOnIndex={-1}
+            className="bg-black/80"
             opacity={9}
             enableTouchThrough={false}
-            {...backdropProps}
           />
         )}
         backgroundStyle={{
           backgroundColor: colors.secondary["900"],
         }}
         style={{
-          shadowColor: "#ff0000",
           shadowOffset: {
             width: 0,
             height: 2,
@@ -95,10 +95,10 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
           elevation: 5,
         }}
       >
-        <View className="p-4 gap-4">
+        <View className="p-4 gap-2">
           <View className=" bg-secondary-800 rounded-2xl">
             <TouchableOpacity className="flex flex-row justify-center p-4">
-              <Text className="text-white text-lg font-medium">Move to inactive</Text>
+              <Text className="text-white text-md font-medium">Move to inactive</Text>
             </TouchableOpacity>
           </View>
 
@@ -109,7 +109,7 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
                 deleteRoutine(routine.id);
               }}
             >
-              <Text className="text-error text-lg font-medium">delete</Text>
+              <Text className="text-error text-md font-medium">delete</Text>
             </TouchableOpacity>
           </View>
         </View>

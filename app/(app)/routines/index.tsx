@@ -1,13 +1,16 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import CreateRoutine from "@until-failure-app/src/components/CreateRoutine/CreateRoutine";
 import RoutineList from "@until-failure-app/src/components/RoutineList";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { colors } from "@until-failure-app/src/theme";
 import { Stack } from "expo-router";
+import { styled } from "nativewind";
 import { useCallback, useContext, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
 
 export default function Routines() {
   const { db } = useContext(DatabaseContext);
@@ -50,6 +53,15 @@ export default function Routines() {
         index={0}
         snapPoints={["92%"]}
         onChange={handleSheetChanges}
+        backdropComponent={(backdropProps) => (
+          <StyledBottomSheetBackdrop
+            {...backdropProps}
+            disappearsOnIndex={-1}
+            className="bg-black/80"
+            opacity={9}
+            enableTouchThrough={false}
+          />
+        )}
         backgroundStyle={{
           backgroundColor: colors.secondary["900"],
         }}
