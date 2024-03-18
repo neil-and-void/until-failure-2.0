@@ -1,6 +1,6 @@
 import { Workout } from "@until-failure-app/src/types";
-import { isNull } from "drizzle-orm";
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
+import * as Crypto from "expo-crypto";
 import * as schema from "../schema";
 import { workouts } from "../schema";
 
@@ -45,6 +45,25 @@ export class Workouts {
         routine,
       };
     });
+  }
+
+  async createWorkout(routineId: string) {
+    const now = new Date();
+    const id = Crypto.randomUUID();
+
+    const workoutValues = {
+      id,
+      routineId,
+      start: now,
+      end: null,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+    };
+
+    await this.db.insert(workouts).values(workoutValues);
+
+    return workoutValues;
   }
 
   async getWorkout(id: string) {

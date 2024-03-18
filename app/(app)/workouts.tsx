@@ -1,19 +1,18 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { WorkoutList } from "@until-failure-app/src/components/WorkoutList/WorkoutList";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { colors } from "@until-failure-app/src/theme";
+import { styled } from "nativewind";
 import { useCallback, useContext, useRef } from "react";
 import { FlatList, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { styled } from "nativewind";
-
 const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
-
 export default function Workouts() {
   const { db } = useContext(DatabaseContext);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const queryClient = useQueryClient();
 
   const { data: workouts, isLoading: getWorkoutsLoading } = useQuery({
     queryKey: ["workouts"],
@@ -23,6 +22,23 @@ export default function Workouts() {
   const { data: routines, isLoading: getRoutinesLoading } = useQuery({
     queryKey: ["routines"],
     queryFn: () => db.routines.getRoutines(),
+  });
+
+  const { mutate: createWorkout } = useMutation({
+    mutationFn: (routineId: string) => db.workouts.createWorkout(routineId),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["workouts"],
+      });
+    },
+    onError: (err) => {
+      // todo
+      console.log(err);
+    },
+    onSuccess: (newWorkout) => {
+      // todo
+      console.log("TODO go to the workouts list");
+    },
   });
 
   const handlePresentModalPress = useCallback(() => {
@@ -80,7 +96,7 @@ export default function Workouts() {
             className="bg-secondary-800 rounded-2xl"
             data={routines || []}
             renderItem={({ item: routine }) => (
-              <TouchableOpacity onPress={() => console.log(routine.id)} className="flex flex-row justify-start p-4">
+              <TouchableOpacity onPress={() => createWorkout(routine.id)} className="flex flex-row justify-start p-4">
                 <Text className="text-white text-lg ">{routine.name}</Text>
               </TouchableOpacity>
             )}
