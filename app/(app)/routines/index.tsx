@@ -2,6 +2,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import CreateRoutine from "@until-failure-app/src/components/CreateRoutine/CreateRoutine";
 import RoutineList from "@until-failure-app/src/components/RoutineList";
+import { Sheet } from "@until-failure-app/src/components/Sheet";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { colors } from "@until-failure-app/src/theme";
 import { Stack } from "expo-router";
@@ -48,36 +49,11 @@ export default function Routines() {
 
       <RoutineList routines={routines || []} loading={getRoutinesLoading} />
 
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={["92%"]}
-        onChange={handleSheetChanges}
-        backdropComponent={(backdropProps) => (
-          <StyledBottomSheetBackdrop
-            {...backdropProps}
-            disappearsOnIndex={-1}
-            className="bg-black/80"
-            opacity={9}
-            enableTouchThrough={false}
-          />
-        )}
-        backgroundStyle={{
-          backgroundColor: colors.secondary["900"],
-        }}
-        style={{
-          shadowColor: "#ff0000",
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-        }}
-      >
-        <CreateRoutine onCreate={() => bottomSheetModalRef.current?.close()} />
-      </BottomSheetModal>
+      <Sheet sheetRef={bottomSheetModalRef} snapPoints={["90%"]}>
+        <View className="px-4">
+          <CreateRoutine onCreate={() => bottomSheetModalRef.current?.close()} />
+        </View>
+      </Sheet>
     </SafeAreaView>
   );
 }

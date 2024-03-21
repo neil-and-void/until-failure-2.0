@@ -12,6 +12,7 @@ interface CreateRoutineProps {
 
 function CreateRoutine({ onCreate }: CreateRoutineProps) {
   const [name, setName] = useState("");
+  const [error, setError] = useState<null | string>(null);
   const { db } = useContext(DatabaseContext);
 
   const queryClient = useQueryClient();
@@ -24,17 +25,32 @@ function CreateRoutine({ onCreate }: CreateRoutineProps) {
       });
       onCreate();
     },
+    onError: (err) => {
+      setError(err.message);
+    },
   });
+
+  const createRoutine = (name: string) => {
+    console.log(name);
+    if (name.length <= 0) {
+      setError("Name cannot be empty");
+      return;
+    }
+    createRoutineMutation({ name });
+  };
 
   return (
     <View>
-      <Text className="text-white">Name your routine</Text>
-      <TextInput
-        placeholder="routine name"
-        value={name}
-        onChangeText={(text) => setName(text)}
-      />
-      <Button onPress={() => createRoutineMutation({ name })}>
+      <Text className="text-white pb-2">Name your routine</Text>
+      <View className="pb-8">
+        <TextInput
+          placeholder="routine name"
+          value={name}
+          onChangeText={(text) => setName(text)}
+        />
+        <Text className="text-error">{error ? error : ""}</Text>
+      </View>
+      <Button onPress={() => createRoutine(name)}>
         <Text className="text-white">Create</Text>
       </Button>
     </View>

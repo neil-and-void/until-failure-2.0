@@ -9,6 +9,7 @@ import { styled } from "nativewind";
 import { useCallback, useContext, useRef } from "react";
 import { Pressable, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
+import { Sheet } from "../Sheet";
 
 const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
 
@@ -68,33 +69,7 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
         </TouchableHighlight>
       </Swipeable>
 
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={["25%"]}
-        onChange={handleSheetChanges}
-        backdropComponent={(backdropProps) => (
-          <StyledBottomSheetBackdrop
-            {...backdropProps}
-            disappearsOnIndex={-1}
-            className="bg-black/80"
-            opacity={9}
-            enableTouchThrough={false}
-          />
-        )}
-        backgroundStyle={{
-          backgroundColor: colors.secondary["900"],
-        }}
-        style={{
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-        }}
-      >
+      <Sheet sheetRef={bottomSheetModalRef} snapPoints={["25%"]}>
         <View className="p-4 gap-2">
           <View className=" bg-secondary-800 rounded-2xl">
             <TouchableOpacity className="flex flex-row justify-center p-4">
@@ -113,7 +88,7 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
             </TouchableOpacity>
           </View>
         </View>
-      </BottomSheetModal>
+      </Sheet>
     </>
   );
 };

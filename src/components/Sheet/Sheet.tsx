@@ -9,14 +9,15 @@ const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
 interface SheetProps {
   children: ReactNode;
   sheetRef: RefObject<BottomSheetModalMethods>;
+  snapPoints: string[];
 }
 
-export const Sheet = ({ children, sheetRef }: SheetProps) => {
+export const Sheet = ({ children, sheetRef, snapPoints }: SheetProps) => {
   return (
     <BottomSheetModal
       ref={sheetRef}
       index={0}
-      snapPoints={["25%"]}
+      snapPoints={snapPoints}
       backdropComponent={(backdropProps) => (
         <StyledBottomSheetBackdrop
           {...backdropProps}

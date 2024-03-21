@@ -173,7 +173,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
         </Button>
       </View>
 
-      <Sheet sheetRef={bottomSheetModalRef}>
+      <Sheet sheetRef={bottomSheetModalRef} snapPoints={["25%"]}>
         <View className="p-4 gap-2">
           <View className=" bg-secondary-800 rounded-2xl">
             <TouchableOpacity className="flex flex-row justify-center p-4">

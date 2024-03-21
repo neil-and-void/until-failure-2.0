@@ -1,5 +1,6 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Sheet } from "@until-failure-app/src/components/Sheet";
 import { WorkoutList } from "@until-failure-app/src/components/WorkoutList/WorkoutList";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { colors } from "@until-failure-app/src/theme";
@@ -52,8 +53,6 @@ export default function Workouts() {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  const handleSheetChanges = useCallback((index: number) => {}, []);
-
   return (
     <SafeAreaView className="">
       <Stack.Screen
@@ -74,34 +73,7 @@ export default function Workouts() {
 
       <WorkoutList workouts={workouts} loading={getWorkoutsLoading} />
 
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={["50%", "92%"]}
-        onChange={handleSheetChanges}
-        backdropComponent={(backdropProps) => (
-          <StyledBottomSheetBackdrop
-            {...backdropProps}
-            disappearsOnIndex={-1}
-            className="bg-black/80"
-            opacity={9}
-            enableTouchThrough={false}
-          />
-        )}
-        backgroundStyle={{
-          backgroundColor: colors.secondary["900"],
-        }}
-        style={{
-          shadowColor: "#ff0000",
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-        }}
-      >
+      <Sheet sheetRef={bottomSheetModalRef} snapPoints={["50%"]}>
         <ScrollView className="p-4">
           <View className="pb-2">
             <Text className="text-white">Choose a routine to start</Text>
@@ -118,7 +90,7 @@ export default function Workouts() {
             ))}
           </View>
         </ScrollView>
-      </BottomSheetModal>
+      </Sheet>
     </SafeAreaView>
   );
 }

@@ -68,16 +68,22 @@ export const Workout = ({ workout }: WorkoutProps) => {
         estimatedItemSize={50}
       />
 
-      <Sheet sheetRef={sheetRef}>
-        <ScrollView>
-          {exerciseRoutines?.map((exerciseRoutine) => (
-            <TouchableOpacity
-              key={exerciseRoutine.id}
-              onPress={() => createExercise({ workoutId: workout.id, exerciseRoutineId: exerciseRoutine.id })}
-            >
-              <Text className="text-white">{exerciseRoutine.name}</Text>
-            </TouchableOpacity>
-          ))}
+      <Sheet sheetRef={sheetRef} snapPoints={["50%"]}>
+        <ScrollView className="p-4">
+          <View className="pb-2">
+            <Text className="text-white">Select an exercise routine</Text>
+          </View>
+          <View className="bg-secondary-800 rounded-2xl">
+            {exerciseRoutines?.map(exerciseRoutine => (
+              <TouchableOpacity
+                onPress={() => createExercise({ workoutId: workout.id, exerciseRoutineId: exerciseRoutine.id })}
+                className="flex flex-row justify-start p-4"
+                key={exerciseRoutine.id}
+              >
+                <Text className="text-white text-lg ">{exerciseRoutine.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </ScrollView>
       </Sheet>
     </>
