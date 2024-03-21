@@ -4,7 +4,7 @@ import { CreateRoutine as CreateRoutineType } from "@until-failure-app/src/types
 import { useContext, useState } from "react";
 import { Text, View } from "react-native";
 import Button from "../Button";
-import TextInput from "../TextInput";
+import { TextInput } from "../TextInput";
 
 interface CreateRoutineProps {
   onCreate: () => void;
@@ -31,7 +31,6 @@ function CreateRoutine({ onCreate }: CreateRoutineProps) {
   });
 
   const createRoutine = (name: string) => {
-    console.log(name);
     if (name.length <= 0) {
       setError("Name cannot be empty");
       return;

@@ -33,6 +33,7 @@ export const Workout = ({ workout }: WorkoutProps) => {
       queryClient.invalidateQueries({
         queryKey: ["workout", workout.id],
       });
+      sheetRef.current?.close();
     },
     onError: (err) => {
       console.log(err);
@@ -43,10 +44,10 @@ export const Workout = ({ workout }: WorkoutProps) => {
     <>
       <FlashList
         ListHeaderComponent={
-          <View className="flex flex-row justify-between">
+          <View className="flex flex-row justify-between items-center pb-4">
             <View>
-              <Text className="text-white font-lg font-medium">{workout.routine.name}</Text>
-              <Text className="text-white">{workout.exercises.length}</Text>
+              <Text className="text-white text-3xl font-medium">{workout.routine.name}</Text>
+              <Text className="text-secondary-600">{workout.exercises.length}</Text>
             </View>
             <Timer start={workout.start} />
           </View>
@@ -64,7 +65,11 @@ export const Workout = ({ workout }: WorkoutProps) => {
           </View>
         }
         data={workout.exercises}
-        renderItem={({ item: exercise }) => <Exercise exercise={exercise} />}
+        renderItem={({ item: exercise }) => (
+          <View className="pb-8">
+            <Exercise exercise={exercise} />
+          </View>
+        )}
         estimatedItemSize={50}
       />
 

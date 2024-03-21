@@ -10,7 +10,7 @@ import {
 import debounce from "lodash.debounce";
 import { useCallback, useContext, useState } from "react";
 import { Pressable, Text, TextInputProps, View } from "react-native";
-import TextInput from "../TextInput";
+import { TextInput } from "../TextInput";
 
 interface SetSchemeWeightInputProps extends TextInputProps {
   measurementType: MeasurementType;

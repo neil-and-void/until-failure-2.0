@@ -1,6 +1,5 @@
-import { Tabs } from "expo-router";
-
 import { colors } from "@until-failure-app/src/theme";
+import { Tabs } from "expo-router";
 
 export default function AppLayout() {
   return (

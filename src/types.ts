@@ -62,7 +62,7 @@ export enum MeasurementType {
   weight = "WEIGHT",
   duration = "DURATION",
   weightedDuration = "WEIGHTED_DURATION",
-  bodyweighjt = "BODYWEIGHT",
+  bodyweight = "BODYWEIGHT",
   counterweight = "COUNTERWEIGHT",
 }
 

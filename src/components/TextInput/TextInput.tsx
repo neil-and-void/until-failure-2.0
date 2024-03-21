@@ -2,7 +2,7 @@ import { colors } from "@until-failure-app/src/theme";
 import React from "react";
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps } from "react-native";
 
-const TextInput = ({
+export const TextInput = ({
   value,
   placeholder,
   onChangeText,
@@ -21,5 +21,3 @@ const TextInput = ({
     />
   );
 };
-
-export default TextInput;

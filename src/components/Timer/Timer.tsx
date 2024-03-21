@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 interface TimerProps {
@@ -15,35 +15,51 @@ export default function Timer({ start }: TimerProps) {
     return delta;
   }, []);
 
+  const getHoursElapsed = useCallback(() => {
+    const hrsElapsed = Math.floor(getMinutesElapsed() / 60);
+    return hrsElapsed;
+  }, []);
+
   const [minutesElapsed, setMinutesElapsed] = useState<number>(getMinutesElapsed());
+  const [hoursElapsed, setHoursElapsed] = useState<number>(getHoursElapsed());
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const elapsed = getMinutesElapsed();
-      setMinutesElapsed(elapsed);
+      const minutesElapsed = getMinutesElapsed();
+      const hoursElapsed = getHoursElapsed();
+
+      setMinutesElapsed(minutesElapsed);
+      setHoursElapsed(hoursElapsed);
     }, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
 
-  const formatTime = useCallback((minutesElapsed: number) => {
-    let hours = Math.floor(minutesElapsed / 60);
-    let minutes = Math.trunc(minutesElapsed % 60);
-
+  const formatHours = useCallback(() => {
+    let hours = getHoursElapsed();
     if (hours >= 99) {
       hours = 99;
+    }
+
+    return hours;
+  }, []);
+
+  const formatMinutes = useCallback(() => {
+    let minutes = Math.trunc(minutesElapsed % 60);
+
+    if (hoursElapsed >= 99) {
       minutes = 0;
     }
 
-    const hourStr = String(hours).padStart(2, "0");
-    const minuteStr = String(minutes).padStart(2, "0");
-
-    return `${hourStr}:${minuteStr}`;
+    return String(minutes).padStart(2, "0");
   }, []);
 
   return (
-    <View>
-      <Text className="text-white">{formatTime(minutesElapsed)}</Text>
+    <View className="flex flex-row">
+      <Text className="text-white">{formatHours()}</Text>
+      <Text className="text-white">h</Text>
+      <Text className="text-white">{formatMinutes()}</Text>
+      <Text className="text-white">m</Text>
     </View>
   );
 }
