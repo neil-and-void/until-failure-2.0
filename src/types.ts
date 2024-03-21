@@ -80,14 +80,12 @@ export enum EditSetSchemeModalType {
 
 export interface SetEntry {
   id: string;
-  weight: number;
-  reps: number;
-  seconds: number;
+  weight: number | null;
+  reps: number | null;
+  seconds: number | null;
   setType: SetType;
   measurement: MeasurementType;
   exerciseId: string;
-  setSchemeId: string;
-  setScheme: SetScheme;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

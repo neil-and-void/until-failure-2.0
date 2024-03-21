@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "d00b4930-79c0-4c53-960c-442056a5227e",
+  "id": "e0084d1a-d2e2-445c-9beb-6af697799955",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "exercise_routines": {
@@ -90,21 +90,21 @@
           "name": "notes",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "workout_id": {
           "name": "workout_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "exercise_routine_id": {
           "name": "exercise_routine_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -224,7 +224,7 @@
         },
         "weight": {
           "name": "weight",
-          "type": "integer",
+          "type": "real",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -263,14 +263,7 @@
           "name": "exercise_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "set_scheme_id": {
-          "name": "set_scheme_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -303,19 +296,6 @@
           "tableTo": "exercises",
           "columnsFrom": [
             "exercise_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "set_entries_set_scheme_id_set_schemes_id_fk": {
-          "name": "set_entries_set_scheme_id_set_schemes_id_fk",
-          "tableFrom": "set_entries",
-          "tableTo": "set_schemes",
-          "columnsFrom": [
-            "set_scheme_id"
           ],
           "columnsTo": [
             "id"

@@ -3,12 +3,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { WorkoutList } from "@until-failure-app/src/components/WorkoutList/WorkoutList";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { colors } from "@until-failure-app/src/theme";
+import { router } from "expo-router";
 import { Stack } from "expo-router";
 import { styled } from "nativewind";
 import { useCallback, useContext, useRef } from "react";
-import { FlatList, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
+
 export default function Workouts() {
   const { db } = useContext(DatabaseContext);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -37,8 +40,11 @@ export default function Workouts() {
       console.log(err);
     },
     onSuccess: (newWorkout) => {
-      // todo
-      console.log("TODO go to the workouts list");
+      bottomSheetModalRef.current?.close();
+      queryClient.invalidateQueries({
+        queryKey: ["workout", newWorkout.id],
+      });
+      router.push(`/workouts/${newWorkout.id}`);
     },
   });
 
@@ -49,7 +55,7 @@ export default function Workouts() {
   const handleSheetChanges = useCallback((index: number) => {}, []);
 
   return (
-    <SafeAreaView className="px-4">
+    <SafeAreaView className="">
       <Stack.Screen
         options={{
           headerShown: false,

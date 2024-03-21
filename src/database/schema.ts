@@ -11,6 +11,7 @@ export const routines = sqliteTable("routines", {
 });
 export const routinesRelations = relations(routines, ({ many }) => ({
   exerciseRoutines: many(exerciseRoutines),
+  workouts: many(workouts),
 }));
 
 export const exerciseRoutines = sqliteTable("exercise_routines", {
@@ -41,11 +42,12 @@ export const setSchemes = sqliteTable("set_schemes", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
-export const setSchemesRelations = relations(setSchemes, ({ one }) => ({
+export const setSchemesRelations = relations(setSchemes, ({ one, many }) => ({
   exerciseRoutine: one(exerciseRoutines, {
     fields: [setSchemes.exerciseRoutineId],
     references: [exerciseRoutines.id],
   }),
+  setEnries: many(setEntries),
 }));
 
 export const workouts = sqliteTable("workouts", {
@@ -58,15 +60,18 @@ export const workouts = sqliteTable("workouts", {
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
 export const workoutsRelations = relations(workouts, ({ one, many }) => ({
-  routine: one(routines),
+  routine: one(routines, {
+    fields: [workouts.routineId],
+    references: [routines.id],
+  }),
   exercises: many(exercises),
 }));
 
 export const exercises = sqliteTable("exercises", {
   id: text("id").primaryKey(),
-  notes: text("notes"),
-  workoutId: text("workout_id").references(() => workouts.id),
-  exerciseRoutineId: text("exercise_routine_id").references(() => exerciseRoutines.id),
+  notes: text("notes").notNull(),
+  workoutId: text("workout_id").references(() => workouts.id).notNull(),
+  exerciseRoutineId: text("exercise_routine_id").references(() => exerciseRoutines.id).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
@@ -76,7 +81,10 @@ export const exercisesRelations = relations(exercises, ({ one, many }) => ({
     fields: [exercises.workoutId],
     references: [workouts.id],
   }),
-  exerciseRoutine: one(exerciseRoutines),
+  exerciseRoutine: one(exerciseRoutines, {
+    fields: [exercises.exerciseRoutineId],
+    references: [exerciseRoutines.id],
+  }),
   setEntries: many(setEntries),
 }));
 
@@ -87,13 +95,14 @@ export const setEntries = sqliteTable("set_entries", {
   seconds: integer("seconds"),
   setType: text("set_type").notNull().default("WORKING"),
   measurement: text("measurement").notNull().default("WORKING"),
-  exerciseId: text("exercise_id").references(() => exercises.id),
-  setSchemeId: text("set_scheme_id").references(() => setSchemes.id),
+  exerciseId: text("exercise_id").references(() => exercises.id).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
 export const setEntriesRelations = relations(setEntries, ({ one }) => ({
-  exercise: one(exercises),
-  setScheme: one(setSchemes),
+  exercise: one(exercises, {
+    fields: [setEntries.exerciseId],
+    references: [exercises.id],
+  }),
 }));

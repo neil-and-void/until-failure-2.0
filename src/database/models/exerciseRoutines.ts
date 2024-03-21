@@ -2,7 +2,7 @@ import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import { exerciseRoutines, exercises, setEntries, setSchemes } from "../schema";
 import * as schema from "../schema";
 
-import { NewExerciseRoutine, UpdateExerciseRoutine } from "@until-failure-app/src/types";
+import { ExerciseRoutine, NewExerciseRoutine, UpdateExerciseRoutine } from "@until-failure-app/src/types";
 import { eq, inArray } from "drizzle-orm";
 import * as Crypto from "expo-crypto";
 
@@ -15,7 +15,6 @@ export class ExerciseRoutines {
 
   async createExerciseRoutine(newExerciseRoutine: NewExerciseRoutine) {
     const now = new Date();
-    console.log(newExerciseRoutine);
 
     const a = await this.db.insert(exerciseRoutines).values({
       id: Crypto.randomUUID(),
@@ -27,6 +26,25 @@ export class ExerciseRoutines {
       deletedAt: null,
     });
     return a;
+  }
+
+  async getExerciseRoutines(routineId: string): Promise<ExerciseRoutine[]> {
+    const exerciseRoutineList = await this.db.select().from(exerciseRoutines).where(
+      eq(exerciseRoutines.routineId, routineId),
+    );
+
+    return exerciseRoutineList.map(exerciseRoutine => {
+      return {
+        id: exerciseRoutine.id,
+        name: exerciseRoutine.name,
+        active: exerciseRoutine.active,
+        routineId: exerciseRoutine.routineId,
+        createdAt: exerciseRoutine.createdAt,
+        updatedAt: exerciseRoutine.createdAt,
+        deletedAt: exerciseRoutine.deletedAt,
+        setSchemes: [], // to satisfy typescript
+      };
+    });
   }
 
   async updateExerciseRoutine(updatedExerciseRoutine: UpdateExerciseRoutine) {
@@ -51,7 +69,6 @@ export class ExerciseRoutines {
 
       if (deletedExercises.length) {
         const exerciseIds = deletedExercises.map(deletedExercise => deletedExercise.exerciseId);
-        console.log(exerciseIds, deletedExercises);
 
         await tx.update(setEntries).set({ deletedAt: now }).where(inArray(setEntries.exerciseId, exerciseIds));
       }

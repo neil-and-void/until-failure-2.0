@@ -11,9 +11,9 @@ CREATE TABLE `exercise_routines` (
 --> statement-breakpoint
 CREATE TABLE `exercises` (
 	`id` text PRIMARY KEY NOT NULL,
-	`notes` text,
-	`workout_id` text,
-	`exercise_routine_id` text,
+	`notes` text NOT NULL,
+	`workout_id` text NOT NULL,
+	`exercise_routine_id` text NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`deleted_at` integer,
@@ -32,18 +32,16 @@ CREATE TABLE `routines` (
 --> statement-breakpoint
 CREATE TABLE `set_entries` (
 	`id` text PRIMARY KEY NOT NULL,
-	`weight` integer,
+	`weight` real,
 	`reps` integer,
 	`seconds` integer,
 	`set_type` text DEFAULT 'WORKING' NOT NULL,
 	`measurement` text DEFAULT 'WORKING' NOT NULL,
-	`exercise_id` text,
-	`set_scheme_id` text,
+	`exercise_id` text NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`deleted_at` integer,
-	FOREIGN KEY (`exercise_id`) REFERENCES `exercises`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`set_scheme_id`) REFERENCES `set_schemes`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`exercise_id`) REFERENCES `exercises`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `set_schemes` (

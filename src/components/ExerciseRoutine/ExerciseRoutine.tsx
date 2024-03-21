@@ -17,6 +17,7 @@ import { Button as RNButton, Pressable, Text, TextInput as RNTextInput, Touchabl
 import { Swipeable } from "react-native-gesture-handler";
 import Button from "../Button";
 import SetScheme from "../SetScheme";
+import { Sheet } from "../Sheet";
 
 const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
 
@@ -100,8 +101,6 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  const handleSheetChanges = useCallback((index: number) => {}, []);
-
   return (
     <View className="pb-6">
       <View className="flex flex-row items-center justify-between px-4">
@@ -174,34 +173,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
         </Button>
       </View>
 
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={["25%"]}
-        onChange={handleSheetChanges}
-        backdropComponent={(backdropProps) => (
-          <StyledBottomSheetBackdrop
-            {...backdropProps}
-            disappearsOnIndex={-1}
-            className="bg-black/80"
-            opacity={9}
-            enableTouchThrough={false}
-          />
-        )}
-        backgroundStyle={{
-          backgroundColor: colors.secondary["900"],
-        }}
-        style={{
-          shadowColor: "#ff0000",
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-        }}
-      >
+      <Sheet sheetRef={bottomSheetModalRef}>
         <View className="p-4 gap-2">
           <View className=" bg-secondary-800 rounded-2xl">
             <TouchableOpacity className="flex flex-row justify-center p-4">
@@ -220,7 +192,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
             </TouchableOpacity>
           </View>
         </View>
-      </BottomSheetModal>
+      </Sheet>
     </View>
   );
 };
