@@ -1,17 +1,13 @@
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
-import { colors } from "@until-failure-app/src/theme";
 import { Routine } from "@until-failure-app/src/types";
 import { router } from "expo-router";
-import { styled } from "nativewind";
 import { useCallback, useContext, useRef } from "react";
 import { Pressable, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { Sheet } from "../Sheet";
-
-const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
 
 interface RoutineListItemProps {
   routine: Routine;
