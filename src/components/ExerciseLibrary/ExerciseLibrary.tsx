@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import { ExerciseRoutine } from "@until-failure-app/src/types";
 import { router } from "expo-router";
+import throttle from "lodash.throttle";
 import { useCallback, useContext, useRef } from "react";
 import { Pressable, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
@@ -54,7 +55,7 @@ const ExerciseRoutineListItem = ({ exerciseRoutine }: ExerciseLibraryListItemPro
       >
         <TouchableHighlight
           className="py-2 bg-black border-t border-gray-800 flex"
-          onPress={() => router.push(`/library/exerciseRoutines/${exerciseRoutine.id}`)}
+          onPress={throttle(() => router.push(`/library/exerciseRoutines/${exerciseRoutine.id}`), 250)}
         >
           <View>
             <Text className="text-white text-lg">{exerciseRoutine.name}</Text>

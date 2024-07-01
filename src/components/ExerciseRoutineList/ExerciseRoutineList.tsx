@@ -1,11 +1,10 @@
 import { FlashList } from "@shopify/flash-list";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
-import { NewExerciseRoutine, Routine, UpdateRoutine } from "@until-failure-app/src/types";
+import { Routine, UpdateRoutine } from "@until-failure-app/src/types";
 import debounce from "lodash.debounce";
 import { useCallback, useContext, useState } from "react";
-import { Image, Text, TextInput, View } from "react-native";
-import Button from "../Button/Button";
+import { Text, TextInput, View } from "react-native";
 import ExerciseRoutine from "../ExerciseRoutine/ExerciseRoutine";
 
 interface ExerciseRoutineListProps {
@@ -20,16 +19,6 @@ const ExerciseRoutineList = ({
   const queryClient = useQueryClient();
   const { db } = useContext(DatabaseContext);
   const [name, setName] = useState(routine.name);
-
-  const { mutate: createExerciseRoutine } = useMutation({
-    mutationFn: (newExerciseRoutine: NewExerciseRoutine) =>
-      db.exerciseRoutines.createExerciseRoutine(newExerciseRoutine),
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["routine", routine.id],
-      });
-    },
-  });
 
   const { mutate: updateRoutineMutation } = useMutation({
     mutationFn: (updatedRoutine: UpdateRoutine) => db.routines.updateRoutine(updatedRoutine),
@@ -59,13 +48,23 @@ const ExerciseRoutineList = ({
     return <Text className="text-white">Skeleton</Text>;
   }
 
-  if (!routine) {
-    return <Text className="text-white">no routine found :\</Text>;
-  }
-
   return (
     <View className="h-full pt-2">
       <FlashList
+        ListEmptyComponent={
+          <View className="flex flex-row justify-center">
+            <Text className="text-white">no exercise routines</Text>
+          </View>
+        }
+        ListHeaderComponent={
+          <View>
+            <TextInput
+              className="text-white text-4xl font-medium px-4"
+              value={name}
+              onChangeText={(name) => updateRoutine(name)}
+            />
+          </View>
+        }
         data={routine.exerciseRoutines}
         renderItem={({ item: exerciseRoutine }) => (
           <ExerciseRoutine key={exerciseRoutine.id} exerciseRoutine={exerciseRoutine} />

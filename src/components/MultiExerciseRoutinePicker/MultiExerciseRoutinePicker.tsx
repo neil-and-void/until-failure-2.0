@@ -36,7 +36,7 @@ export const MultiExerciseRoutineListPicker = (props: MultiExerciseRoutineListPi
       selected: true,
       exerciseRoutine,
     }));
-  }, [selectedExerciseRoutines]);
+  }, [selectedExerciseRoutines, exerciseRoutines]);
 
   const handleItemPress = useCallback((exerciseRoutineId: string, selected: boolean) => {
     if (selected) onPressSelected(exerciseRoutineId);

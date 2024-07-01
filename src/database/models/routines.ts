@@ -1,7 +1,9 @@
 import {
   CreateRoutine,
+  ExerciseRoutine,
   MeasurementType,
   Routine,
+  SetScheme,
   SetType,
   UpdateRoutine,
 } from "@until-failure-app/src/types";
@@ -10,7 +12,6 @@ import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import * as Crypto from "expo-crypto";
 import {
   exerciseRoutines,
-  exerciseRoutines as exerciseRoutinesTable,
   exerciseRoutinesToRoutines as exerciseRoutinesToRoutinesTable,
   exercises,
   routines,
@@ -19,8 +20,6 @@ import {
   workouts,
 } from "../schema";
 import * as schema from "../schema";
-
-type StringArrayMap = { [key: string]: string[] };
 
 export class Routines {
   private db: ExpoSQLiteDatabase<typeof schema>;
@@ -167,7 +166,6 @@ export class Routines {
       where: and(eq(routines.id, id), isNull(routines.deletedAt)),
       with: {
         exerciseRoutinesToRoutines: {
-          where: eq(exerciseRoutinesToRoutinesTable.routineId, id),
           with: {
             exerciseRoutine: {
               with: {
@@ -181,9 +179,45 @@ export class Routines {
 
     if (!routine) throw new Error("routine not found");
 
-    console.log("routines", routine);
+    const exerciseRoutines = routine.exerciseRoutinesToRoutines.reduce<
+      ExerciseRoutine[]
+    >((exerciseRoutines, { exerciseRoutine }) => {
+      const setSchemes = exerciseRoutine.setSchemes.reduce<SetScheme[]>(
+        (setSchemes, setScheme) => {
+          if (!setScheme.deletedAt) {
+            setSchemes.push({
+              id: setScheme.id,
+              createdAt: setScheme.createdAt,
+              deletedAt: setScheme.deletedAt,
+              updatedAt: setScheme.updatedAt,
+              targetReps: setScheme.targetReps,
+              targetDuration: setScheme.targetDuration,
+              setType: setScheme.setType as SetType,
+              measurement: setScheme.measurement as MeasurementType,
+              exerciseRoutineId: setScheme.exerciseRoutineId,
+            });
+          }
 
-    console.log(await this.db.select().from(exerciseRoutinesToRoutinesTable));
+          return setSchemes;
+        },
+        [],
+      );
+
+      if (!exerciseRoutine.deletedAt) {
+        exerciseRoutines.push({
+          id: exerciseRoutine.id,
+          name: exerciseRoutine.name,
+          active: exerciseRoutine.active,
+          notes: exerciseRoutine.notes,
+          createdAt: exerciseRoutine.createdAt,
+          updatedAt: exerciseRoutine.updatedAt,
+          deletedAt: exerciseRoutine.deletedAt,
+          setSchemes,
+        });
+      }
+
+      return exerciseRoutines;
+    }, []);
 
     return {
       id: routine.id,
@@ -192,7 +226,7 @@ export class Routines {
       createdAt: routine.createdAt,
       updatedAt: routine.updatedAt,
       deletedAt: routine.deletedAt,
-      exerciseRoutines: [],
+      exerciseRoutines,
     };
 
     // if (!routine) {
@@ -293,23 +327,23 @@ export class Routines {
   }
 
   async addExerciseRoutine(routineId: string, exerciseRoutineId: string) {
-    console.log("beforeaddddd", routineId, exerciseRoutineId);
     const res = await this.db.insert(exerciseRoutinesToRoutinesTable).values({
       routineId,
       exerciseRoutineId,
     });
-
-    console.log("mohammed", res);
     return res;
   }
 
-  async removeExerciseRoutine(exerciseRoutineId: string) {
+  async removeExerciseRoutine(routineId: string, exerciseRoutineId: string) {
     return await this.db
       .delete(exerciseRoutinesToRoutinesTable)
       .where(
-        eq(
-          exerciseRoutinesToRoutinesTable.exerciseRoutineId,
-          exerciseRoutineId,
+        and(
+          eq(exerciseRoutinesToRoutinesTable.routineId, routineId),
+          eq(
+            exerciseRoutinesToRoutinesTable.exerciseRoutineId,
+            exerciseRoutineId,
+          ),
         ),
       );
   }

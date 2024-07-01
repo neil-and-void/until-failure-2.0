@@ -10,7 +10,7 @@ interface SheetProps {
   children: ReactNode;
   sheetRef: RefObject<BottomSheetModalMethods>;
   snapPoints: string[];
-  enablePanDownToClose: boolean;
+  enablePanDownToClose?: boolean;
 }
 
 export const Sheet = ({ children, sheetRef, snapPoints, enablePanDownToClose = true }: SheetProps) => {

@@ -39,7 +39,7 @@ export const PickExerciseRoutines = (props: PickExerciseRoutinesProps) => {
 
   const { mutate: removeExerciseRoutine } = useMutation({
     mutationFn: (removeExerciseRoutine: RemoveExerciseRoutine) =>
-      db.routines.addExerciseRoutine(removeExerciseRoutine.routineId, removeExerciseRoutine.exerciseRoutineId),
+      db.routines.removeExerciseRoutine(removeExerciseRoutine.routineId, removeExerciseRoutine.exerciseRoutineId),
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["searchExerciseRoutines"], // TODO: bust cache for routines

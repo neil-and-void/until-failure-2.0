@@ -19,9 +19,10 @@ import { Sheet } from "../Sheet";
 
 type ExerciseRoutineProps = {
   exerciseRoutine: ExerciseRoutineType;
+  canEdit?: boolean;
 };
 
-const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
+const ExerciseRoutine = ({ exerciseRoutine, canEdit = true }: ExerciseRoutineProps) => {
   const { db } = useContext(DatabaseContext);
   const queryClient = useQueryClient();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
