@@ -66,9 +66,10 @@ const SetSchemeTextFields = ({
 interface SetSchemeProps {
   setScheme: SetSchemeType;
   exerciseRoutineId: string;
+  canEdit?: boolean;
 }
 
-const SetScheme = ({ setScheme, exerciseRoutineId }: SetSchemeProps) => {
+const SetScheme = ({ setScheme, exerciseRoutineId, canEdit = true }: SetSchemeProps) => {
   const { editSetSchemeModalState, setEditSetSchemeModalState } = useContext(
     EditSetSchemeModalContext,
   );
@@ -170,6 +171,7 @@ const SetScheme = ({ setScheme, exerciseRoutineId }: SetSchemeProps) => {
       </View>
 
       <SetSchemeTextFields
+        editable={canEdit}
         value={targetReps}
         measurementType={setScheme.measurement}
         onBlur={() => targetReps.length === 0 && handleChangedTargetReps("")}

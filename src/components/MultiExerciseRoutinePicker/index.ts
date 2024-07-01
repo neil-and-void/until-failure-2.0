@@ -1,1 +1,1 @@
-export { default } from "./MultiExerciseRoutinePicker";
+export { MultiExerciseRoutineListPicker as default } from "./MultiExerciseRoutinePicker";

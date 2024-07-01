@@ -17,5 +17,5 @@ export const Routine = ({ routine, loading }: RoutineProps) => {
     );
   }
 
-  return <ExerciseRoutineList routine={routine} loading={loading} />;
+  return <ExerciseRoutineList routine={routine} loading={loading} canEdit={false} />;
 };

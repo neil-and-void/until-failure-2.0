@@ -103,6 +103,7 @@ const ExerciseRoutine = ({ exerciseRoutine, canEdit = true }: ExerciseRoutinePro
       <View className="flex flex-row items-center justify-between px-4">
         <View>
           <RNTextInput
+            editable={canEdit}
             value={name}
             className="text-2xl text-white flex-1"
             onChangeText={(name) => {
@@ -114,7 +115,7 @@ const ExerciseRoutine = ({ exerciseRoutine, canEdit = true }: ExerciseRoutinePro
             {exerciseRoutine.setSchemes.length === 1 ? "" : "s"}
           </Text>
         </View>
-        <RNButton title="options" onPress={() => handlePresentModalPress()} />
+        {canEdit ? <RNButton title="options" onPress={() => handlePresentModalPress()} /> : null}
       </View>
 
       <View className="pb-2">
@@ -128,6 +129,7 @@ const ExerciseRoutine = ({ exerciseRoutine, canEdit = true }: ExerciseRoutinePro
                 })}
               >
                 <Swipeable
+                  enabled={canEdit}
                   renderRightActions={() => (
                     <Pressable
                       className="flex flex-col justify-center px-2"
@@ -139,6 +141,7 @@ const ExerciseRoutine = ({ exerciseRoutine, canEdit = true }: ExerciseRoutinePro
                 >
                   <View>
                     <SetScheme
+                      canEdit={canEdit}
                       setScheme={setScheme}
                       exerciseRoutineId={exerciseRoutine.id}
                     />
@@ -154,21 +157,25 @@ const ExerciseRoutine = ({ exerciseRoutine, canEdit = true }: ExerciseRoutinePro
           )}
       </View>
 
-      <View className="px-4">
-        <Button
-          disabled={false}
-          onPress={() =>
-            createSetSchemeMutation({
-              measurement: MeasurementType.weight,
-              setType: SetType.working,
-              exerciseRoutineId: exerciseRoutine.id,
-            })}
-        >
-          <View className="flex flex-row justify-center">
-            <Text className="text-white">Add set</Text>
+      {canEdit
+        ? (
+          <View className="px-4">
+            <Button
+              disabled={false}
+              onPress={() =>
+                createSetSchemeMutation({
+                  measurement: MeasurementType.weight,
+                  setType: SetType.working,
+                  exerciseRoutineId: exerciseRoutine.id,
+                })}
+            >
+              <View className="flex flex-row justify-center">
+                <Text className="text-white">Add set</Text>
+              </View>
+            </Button>
           </View>
-        </Button>
-      </View>
+        )
+        : null}
 
       <Sheet sheetRef={bottomSheetModalRef} snapPoints={["25%"]}>
         <View className="p-4 gap-2">

@@ -1,3 +1,4 @@
+import { AntDesign } from "@expo/vector-icons";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import { CreateExerciseRoutine } from "@until-failure-app/src/components/CreateExerciseRoutine";
@@ -76,9 +77,9 @@ export default function Library() {
           <Text className="text-white text-4xl self-start">Library</Text>
           <Pressable
             onPress={() => handlePresentModalPress()}
-            className="self-start"
+            className="self-start py-2"
           >
-            <Text className="text-white text-3xl">+</Text>
+            <AntDesign name="plus" size={24} color="white" />
           </Pressable>
         </View>
 

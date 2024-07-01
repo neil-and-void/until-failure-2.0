@@ -10,11 +10,13 @@ import ExerciseRoutine from "../ExerciseRoutine/ExerciseRoutine";
 interface ExerciseRoutineListProps {
   routine: Routine;
   loading: boolean;
+  canEdit?: boolean;
 }
 
 const ExerciseRoutineList = ({
   routine,
   loading,
+  canEdit = true,
 }: ExerciseRoutineListProps) => {
   const queryClient = useQueryClient();
   const { db } = useContext(DatabaseContext);
@@ -67,7 +69,7 @@ const ExerciseRoutineList = ({
         }
         data={routine.exerciseRoutines}
         renderItem={({ item: exerciseRoutine }) => (
-          <ExerciseRoutine key={exerciseRoutine.id} exerciseRoutine={exerciseRoutine} />
+          <ExerciseRoutine key={exerciseRoutine.id} exerciseRoutine={exerciseRoutine} canEdit={canEdit} />
         )}
         estimatedItemSize={200}
       />

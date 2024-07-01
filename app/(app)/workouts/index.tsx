@@ -1,3 +1,4 @@
+import { AntDesign } from "@expo/vector-icons";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Sheet } from "@until-failure-app/src/components/Sheet";
@@ -65,9 +66,9 @@ export default function Workouts() {
         <Text className="text-white text-4xl self-start">Workouts</Text>
         <Pressable
           onPress={() => handlePresentModalPress()}
-          className="self-start"
+          className="self-start py-2"
         >
-          <Text className="text-white text-3xl">+</Text>
+          <AntDesign name="plus" size={24} color="white" />
         </Pressable>
       </View>
 

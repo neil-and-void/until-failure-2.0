@@ -15,7 +15,7 @@ import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
 const measurementTypeOptions: RadioButtonProps[] = [
   {
     label: "weight",
-    id: "WEIGHT",
+    id: MeasurementType.weight,
     color: "#ffffff",
     labelStyle: {
       color: "#ffffff",
@@ -26,7 +26,7 @@ const measurementTypeOptions: RadioButtonProps[] = [
   },
   {
     label: "duration",
-    id: "DURATION",
+    id: MeasurementType.duration,
     color: "#ffffff",
     labelStyle: {
       color: "#ffffff",
@@ -37,7 +37,7 @@ const measurementTypeOptions: RadioButtonProps[] = [
   },
   {
     label: "weighted duration",
-    id: "WEIGHTED_DURATION",
+    id: MeasurementType.weightedDuration,
     color: "#ffffff",
     labelStyle: {
       color: "#ffffff",
@@ -48,7 +48,7 @@ const measurementTypeOptions: RadioButtonProps[] = [
   },
   {
     label: "bodyweight",
-    id: "BODYWEIGHT",
+    id: MeasurementType.bodyweight,
     color: "#ffffff",
     labelStyle: {
       color: "#ffffff",
@@ -62,7 +62,7 @@ const measurementTypeOptions: RadioButtonProps[] = [
 const setTypeOptions: RadioButtonProps[] = [
   {
     label: "working",
-    id: "WORKING",
+    id: SetType.working,
     color: "#ffffff",
     labelStyle: {
       color: "#ffffff",
@@ -73,7 +73,7 @@ const setTypeOptions: RadioButtonProps[] = [
   },
   {
     label: "warmup",
-    id: "WARMUP",
+    id: SetType.warmup,
     color: "#ffffff",
     labelStyle: {
       color: "#ffffff",
@@ -84,7 +84,7 @@ const setTypeOptions: RadioButtonProps[] = [
   },
   {
     label: "dropset",
-    id: "DROPSET",
+    id: SetType.drop,
     color: "#ffffff",
     labelStyle: {
       color: "#ffffff",
@@ -95,7 +95,18 @@ const setTypeOptions: RadioButtonProps[] = [
   },
   {
     label: "superset",
-    id: "SUPERSET",
+    id: SetType.super,
+    color: "#ffffff",
+    labelStyle: {
+      color: "#ffffff",
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+  },
+  {
+    label: "until failure",
+    id: SetType.untilFailure,
     color: "#ffffff",
     labelStyle: {
       color: "#ffffff",

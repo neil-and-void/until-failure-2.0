@@ -96,6 +96,7 @@ export enum SetType {
   working = "WORKING",
   drop = "DROP",
   super = "SUPER",
+  untilFailure = "UNTIL_FAILURE",
 }
 
 export enum EditSetSchemeModalType {
