@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import EditSetScheme from "@until-failure-app/src/components/EditSetScheme";
-import { Routine } from "@until-failure-app/src/components/Routine";
+import ExerciseRoutine from "@until-failure-app/src/components/ExerciseRoutine/ExerciseRoutine";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
 import {
   EditSetSchemeModalContext,
@@ -8,50 +8,42 @@ import {
 } from "@until-failure-app/src/contexts/EditSetSchemeModalContext";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useContext, useState } from "react";
-import { Button, Modal, View } from "react-native";
+import { Modal, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
-enum Mode {
-  Edit = "EDIT",
-  View = "VIEW",
-}
-
-interface EditButtonProps {
-  mode: Mode;
-  onPress: (mode: Mode) => void;
-}
-
-const EditButton = ({ mode, onPress }: EditButtonProps) => {
-  const handlePress = () => {
-    let newMode = Mode.Edit;
-    if (mode === Mode.Edit) {
-      newMode = Mode.View;
-    }
-    onPress(newMode);
-  };
-
-  let text = "Edit";
-  if (mode === Mode.Edit) {
-    text = "Done";
-  }
-
-  return <Button onPress={() => handlePress()} title={text} />;
-};
-
-function ViewRoutine() {
+function ViewExerciseRoutine() {
   const { db } = useContext(DatabaseContext);
-  const [editMode, setEditMode] = useState<Mode>(Mode.View);
+
   const [editSetSchemeState, setEditSetSchemeState] = useState<EditSetSchemeModalState>({
     setScheme: null,
     type: null,
     isOpen: false,
   });
 
-  const { routineId } = useLocalSearchParams();
+  const { exerciseRoutineId } = useLocalSearchParams();
 
-  const { data: routine, isLoading: routineLoading } = useQuery({
-    queryKey: ["routine", routineId],
-    queryFn: () => db.routines.getRoutine(routineId as string),
+  const { data: exerciseRoutine, isLoading: exerciseRoutineLoading } = useQuery({
+    queryKey: ["exerciseRoutine", exerciseRoutineId],
+    queryFn: () => db.exerciseRoutines.getExerciseRoutine(exerciseRoutineId as string),
   });
+
+  console.log(editSetSchemeState);
+
+  if (exerciseRoutineLoading) {
+    return (
+      <View>
+        <Text>loading</Text>
+      </View>
+    );
+  }
+
+  if (!exerciseRoutine) {
+    return (
+      <View>
+        <Text>Couldn't find exercise</Text>
+      </View>
+    );
+  }
 
   return (
     <EditSetSchemeModalContext.Provider
@@ -63,13 +55,13 @@ function ViewRoutine() {
       <View>
         <Stack.Screen
           options={{
-            headerBackTitle: "routines",
-            title: "TODO",
-            headerRight: () => <EditButton mode={editMode} onPress={setEditMode} />,
+            headerBackTitle: "exercises",
+            title: "",
           }}
         />
-
-        <Routine routine={routine} loading={routineLoading} />
+        <ScrollView className="h-screen">
+          <ExerciseRoutine exerciseRoutine={exerciseRoutine} />
+        </ScrollView>
 
         <View className="justify-center items-center flex-1 flex flex-col">
           <Modal
@@ -79,7 +71,7 @@ function ViewRoutine() {
           >
             <View className="justify-center items-center flex-1 flex flex-col bg-black/75">
               <View className="flex flex-col justify-center items-center bg-secondary-800 p-4 rounded-lg">
-                <EditSetScheme routineId={routine?.id} />
+                <EditSetScheme exerciseRoutineId={exerciseRoutine.id} />
               </View>
             </View>
           </Modal>
@@ -89,4 +81,4 @@ function ViewRoutine() {
   );
 }
 
-export default ViewRoutine;
+export default ViewExerciseRoutine;

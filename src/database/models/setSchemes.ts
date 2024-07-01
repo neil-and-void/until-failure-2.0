@@ -29,19 +29,25 @@ export class SetSchemes {
   async updateSetScheme(updatedSetScheme: UpdateSetScheme) {
     const now = new Date();
 
-    return await this.db.update(setSchemes).set({
-      targetReps: updatedSetScheme.targetReps,
-      measurement: updatedSetScheme.measurement,
-      setType: updatedSetScheme.setType,
-      updatedAt: now,
-    }).where(eq(setSchemes.id, updatedSetScheme.id));
+    return await this.db
+      .update(setSchemes)
+      .set({
+        targetReps: updatedSetScheme.targetReps,
+        measurement: updatedSetScheme.measurement,
+        setType: updatedSetScheme.setType,
+        updatedAt: now,
+      })
+      .where(eq(setSchemes.id, updatedSetScheme.id));
   }
 
   async deleteSetScheme(id: string) {
     const now = new Date();
 
-    return await this.db.update(setSchemes).set({
-      deletedAt: now,
-    }).where(eq(setSchemes.id, id));
+    return await this.db
+      .update(setSchemes)
+      .set({
+        deletedAt: now,
+      })
+      .where(eq(setSchemes.id, id));
   }
 }

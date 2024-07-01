@@ -1,10 +1,17 @@
-import { CreateRoutine, MeasurementType, Routine, SetType, UpdateRoutine } from "@until-failure-app/src/types";
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import {
+  CreateRoutine,
+  MeasurementType,
+  Routine,
+  SetType,
+  UpdateRoutine,
+} from "@until-failure-app/src/types";
+import { and, desc, eq, inArray, isNull } from "drizzle-orm";
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import * as Crypto from "expo-crypto";
 import {
   exerciseRoutines,
   exerciseRoutines as exerciseRoutinesTable,
+  exerciseRoutinesToRoutines as exerciseRoutinesToRoutinesTable,
   exercises,
   routines,
   setEntries as setEntriesTable,
@@ -12,6 +19,8 @@ import {
   workouts,
 } from "../schema";
 import * as schema from "../schema";
+
+type StringArrayMap = { [key: string]: string[] };
 
 export class Routines {
   private db: ExpoSQLiteDatabase<typeof schema>;
@@ -35,21 +44,34 @@ export class Routines {
   }
 
   async getRoutines(limit: number = 20): Promise<Routine[]> {
-    const routineList = await this.db.query.routines.findMany({ limit, with: { exerciseRoutines: true } });
+    const routineList = await this.db.query.routines.findMany({
+      limit,
+      orderBy: [desc(routines.createdAt)],
+      where: isNull(routines.deletedAt),
+      with: {
+        exerciseRoutinesToRoutines: {
+          with: {
+            exerciseRoutine: true,
+          },
+        },
+      },
+    });
 
-    return routineList.map(routine => {
-      const exerciseRoutines = routine.exerciseRoutines.map((exerciseRoutine) => {
-        return {
-          id: exerciseRoutine.id,
-          name: exerciseRoutine.name,
-          active: exerciseRoutine.active,
-          routineId: exerciseRoutine.routineId,
-          createdAt: exerciseRoutine.createdAt,
-          updatedAt: exerciseRoutine.updatedAt,
-          deletedAt: exerciseRoutine.deletedAt,
-          setSchemes: [], // empty to satisfy type
-        };
-      });
+    return routineList.map((routine) => {
+      const exerciseRoutines = routine.exerciseRoutinesToRoutines.map(
+        ({ exerciseRoutine }) => {
+          return {
+            id: exerciseRoutine.id,
+            name: exerciseRoutine.name,
+            active: exerciseRoutine.active,
+            notes: exerciseRoutine.notes,
+            createdAt: exerciseRoutine.createdAt,
+            updatedAt: exerciseRoutine.updatedAt,
+            deletedAt: exerciseRoutine.deletedAt,
+            setSchemes: [], // empty to satisfy type
+          };
+        },
+      );
 
       return {
         id: routine.id,
@@ -64,46 +86,104 @@ export class Routines {
   }
 
   async getRoutine(id: string): Promise<Routine> {
+    //   const routineQueryResults = await this.db
+    //     .select()
+    //     .from(routines)
+    //     .leftJoin(
+    //       exerciseRoutinesToRoutinesTable,
+    //       eq(routines.id, exerciseRoutinesToRoutinesTable.routineId),
+    //     )
+    //     .where(and(eq(routines.id, id), isNull(routines.deletedAt)))
+    //     .limit(1);
+    //
+    //   if (routineQueryResults.length < 1) {
+    //     throw new Error("no routine found");
+    //   }
+    //
+    //   const routine = routineQueryResults[0].routines;
+    //
+    //   const exerciseRoutineIds = routineQueryResults.reduce<string[]>(
+    //     (accumulator, routineQueryResult) => {
+    //       if (routineQueryResult.exerciseRoutinesToRoutines) {
+    //         accumulator.push(
+    //           routineQueryResult.exerciseRoutinesToRoutines.exerciseRoutineId,
+    //         );
+    //       }
+    //       return accumulator;
+    //     },
+    //     [],
+    //   );
+    //
+    //   if (exerciseRoutines.length === 0) {
+    //     return {
+    //       id: routine.id,
+    //       name: routine.name,
+    //       active: routine.active,
+    //       createdAt: routine.createdAt,
+    //       updatedAt: routine.updatedAt,
+    //       deletedAt: routine.deletedAt,
+    //       exerciseRoutines: [],
+    //     };
+    //   }
+    //
+    //   const activeExerciseRoutines = await this.db
+    //     .select()
+    //     .from(exerciseRoutines)
+    //     .leftJoin(setSchemes, eq(exerciseRoutines.id, setSchemes.id))
+    //     .where(
+    //       and(
+    //         inArray(exerciseRoutines.id, exerciseRoutineIds),
+    //         isNull(exerciseRoutines.deletedAt),
+    //       ),
+    //     )
+    //     .orderBy(exerciseRoutines.createdAt);
+    //
+    //   const setSchemeIds = activeExerciseRoutines.reduce<StringArrayMap>(
+    //     (exerciseRoutineIdMap, exerciseRoutine) => {
+    //       if (!exerciseRoutine.set_schemes) return exerciseRoutineIdMap;
+    //
+    //       const setSchemeId = exerciseRoutine.set_schemes.id;
+    //
+    //       if (!exerciseRoutineIdMap[exerciseRoutine.exercise_routines.id]) {
+    //         exerciseRoutineIdMap[exerciseRoutine.exercise_routines.id] = [];
+    //       }
+    //
+    //       return exerciseRoutineIdMap;
+    //     },
+    //     {},
+    //   );
+    //
+    //   return {
+    //     id: routine.id,
+    //     name: routine.name,
+    //     active: routine.active,
+    //     createdAt: routine.createdAt,
+    //     updatedAt: routine.updatedAt,
+    //     deletedAt: routine.deletedAt,
+    //     exerciseRoutines: [],
+    //   };
+
     const routine = await this.db.query.routines.findFirst({
       where: and(eq(routines.id, id), isNull(routines.deletedAt)),
       with: {
-        exerciseRoutines: {
-          where: isNull(exerciseRoutinesTable.deletedAt),
-          with: { setSchemes: { where: isNull(setSchemes.deletedAt) } },
+        exerciseRoutinesToRoutines: {
+          where: eq(exerciseRoutinesToRoutinesTable.routineId, id),
+          with: {
+            exerciseRoutine: {
+              with: {
+                setSchemes: true,
+              },
+            },
+          },
         },
       },
     });
 
-    if (!routine) {
-      throw new Error("could not find routine");
-    }
+    if (!routine) throw new Error("routine not found");
 
-    const exerciseRoutines = routine?.exerciseRoutines.map(exerciseRoutine => {
-      const setSchemes = exerciseRoutine.setSchemes.map(setScheme => {
-        return {
-          id: setScheme.id,
-          createdAt: setScheme.createdAt,
-          deletedAt: setScheme.deletedAt,
-          updatedAt: setScheme.updatedAt,
-          targetReps: setScheme.targetReps,
-          targetDuration: setScheme.targetDuration,
-          setType: setScheme.setType as SetType,
-          measurement: setScheme.measurement as MeasurementType,
-          exerciseRoutineId: setScheme.exerciseRoutineId,
-        };
-      });
+    console.log("routines", routine);
 
-      return {
-        id: exerciseRoutine.id,
-        name: exerciseRoutine.name,
-        active: exerciseRoutine.active,
-        routineId: exerciseRoutine.routineId,
-        createdAt: exerciseRoutine.createdAt,
-        updatedAt: exerciseRoutine.updatedAt,
-        deletedAt: exerciseRoutine.deletedAt,
-        setSchemes,
-      };
-    });
+    console.log(await this.db.select().from(exerciseRoutinesToRoutinesTable));
 
     return {
       id: routine.id,
@@ -112,8 +192,51 @@ export class Routines {
       createdAt: routine.createdAt,
       updatedAt: routine.updatedAt,
       deletedAt: routine.deletedAt,
-      exerciseRoutines,
+      exerciseRoutines: [],
     };
+
+    // if (!routine) {
+    //   throw new Error("could not find routine");
+    // }
+    //
+    // const exerciseRoutines = routine?.exerciseRoutines.map(
+    //   (exerciseRoutine) => {
+    //     const setSchemes = exerciseRoutine.setSchemes.map((setScheme) => {
+    //       return {
+    //         id: setScheme.id,
+    //         createdAt: setScheme.createdAt,
+    //         deletedAt: setScheme.deletedAt,
+    //         updatedAt: setScheme.updatedAt,
+    //         targetReps: setScheme.targetReps,
+    //         targetDuration: setScheme.targetDuration,
+    //         setType: setScheme.setType as SetType,
+    //         measurement: setScheme.measurement as MeasurementType,
+    //         exerciseRoutineId: setScheme.exerciseRoutineId,
+    //       };
+    //     });
+    //
+    //     return {
+    //       id: exerciseRoutine.id,
+    //       name: exerciseRoutine.name,
+    //       active: exerciseRoutine.active,
+    //       routineId: exerciseRoutine.routineId,
+    //       createdAt: exerciseRoutine.createdAt,
+    //       updatedAt: exerciseRoutine.updatedAt,
+    //       deletedAt: exerciseRoutine.deletedAt,
+    //       setSchemes,
+    //     };
+    //   },
+    // );
+    //
+    // return {
+    //   id: routine.id,
+    //   name: routine.name,
+    //   active: routine.active,
+    //   createdAt: routine.createdAt,
+    //   updatedAt: routine.updatedAt,
+    //   deletedAt: routine.deletedAt,
+    //   exerciseRoutines,
+    // };
   }
 
   async updateRoutine(routine: UpdateRoutine) {
@@ -124,34 +247,70 @@ export class Routines {
     return await this.db.transaction(async (tx) => {
       await tx.delete(routines).where(eq(routines.id, id));
 
-      const deletedWorkouts = await tx.delete(workouts).where(eq(workouts.routineId, id))
+      const deletedWorkouts = await tx
+        .delete(workouts)
+        .where(eq(workouts.routineId, id))
         .returning({
           id: workouts.id,
         });
-      const deletedWorkoutIds = deletedWorkouts.map(deletedWorkout => deletedWorkout.id);
+      const deletedWorkoutIds = deletedWorkouts.map(
+        (deletedWorkout) => deletedWorkout.id,
+      );
 
       // delete exercises
-      const deletedExercises = await tx.delete(exercises).where(inArray(exercises.workoutId, deletedWorkoutIds))
+      const deletedExercises = await tx
+        .delete(exercises)
+        .where(inArray(exercises.workoutId, deletedWorkoutIds))
         .returning({
           id: exercises.id,
         });
-      const deletedExerciseIds = deletedExercises.map(deletedExercise => deletedExercise.id);
-
-      // delete set entries
-      await tx.delete(setEntriesTable).where(
-        inArray(setEntriesTable.exerciseId, deletedExerciseIds),
+      const deletedExerciseIds = deletedExercises.map(
+        (deletedExercise) => deletedExercise.id,
       );
 
-      const deletedExerciseRoutines = await tx.delete(exerciseRoutines).where(eq(exerciseRoutines.routineId, id))
+      // delete set entries
+      await tx
+        .delete(setEntriesTable)
+        .where(inArray(setEntriesTable.exerciseId, deletedExerciseIds));
+
+      const deletedExerciseRoutines = await tx
+        .delete(exerciseRoutines)
+        .where(eq(exerciseRoutines.routineId, id))
         .returning({
           id: exerciseRoutines.id,
         });
 
-      const deletedExerciseRoutineIds = deletedExerciseRoutines.map(deletedExerciseRoutine =>
-        deletedExerciseRoutine.id
+      const deletedExerciseRoutineIds = deletedExerciseRoutines.map(
+        (deletedExerciseRoutine) => deletedExerciseRoutine.id,
       );
 
-      await tx.delete(setSchemes).where(inArray(setSchemes.exerciseRoutineId, deletedExerciseRoutineIds));
+      await tx
+        .delete(setSchemes)
+        .where(
+          inArray(setSchemes.exerciseRoutineId, deletedExerciseRoutineIds),
+        );
     });
+  }
+
+  async addExerciseRoutine(routineId: string, exerciseRoutineId: string) {
+    console.log("beforeaddddd", routineId, exerciseRoutineId);
+    const res = await this.db.insert(exerciseRoutinesToRoutinesTable).values({
+      routineId,
+      exerciseRoutineId,
+    });
+
+    console.log("mohammed", res);
+    return res;
+  }
+
+  async removeExerciseRoutine(exerciseRoutineId: string) {
+    return await this.db
+      .delete(exerciseRoutinesToRoutinesTable)
+      .where(
+        eq(
+          exerciseRoutinesToRoutinesTable.exerciseRoutineId,
+          exerciseRoutineId,
+        ),
+      );
   }
 }

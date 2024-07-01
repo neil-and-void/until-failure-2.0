@@ -15,14 +15,19 @@ export type CreateRoutine = Omit<
 
 export type UpdateRoutine = Omit<
   Routine,
-  "active" | "setSchemes" | "createdAt" | "updatedAt" | "deletedAt" | "exerciseRoutines"
+  | "active"
+  | "setSchemes"
+  | "createdAt"
+  | "updatedAt"
+  | "deletedAt"
+  | "exerciseRoutines"
 >;
 
 export type ExerciseRoutine = {
   id: string;
   name: string;
+  notes: string;
   active: boolean;
-  routineId: string;
   setSchemes: SetScheme[];
   createdAt: Date;
   updatedAt: Date;
@@ -31,12 +36,24 @@ export type ExerciseRoutine = {
 
 export type NewExerciseRoutine = Omit<
   ExerciseRoutine,
-  "active" | "id" | "setSchemes" | "createdAt" | "updatedAt" | "deletedAt"
+  | "active"
+  | "id"
+  | "setSchemes"
+  | "createdAt"
+  | "updatedAt"
+  | "deletedAt"
+  | "notes"
 >;
 
 export type UpdateExerciseRoutine = Omit<
   ExerciseRoutine,
-  "active" | "routineId" | "setSchemes" | "createdAt" | "updatedAt" | "deletedAt"
+  | "active"
+  | "routineId"
+  | "setSchemes"
+  | "createdAt"
+  | "updatedAt"
+  | "deletedAt"
+  | "notes"
 >;
 
 export type SetScheme = {
@@ -53,10 +70,18 @@ export type SetScheme = {
 
 export type NewSetScheme = Omit<
   SetScheme,
-  "id" | "targetReps" | "targetDuration" | "createdAt" | "updatedAt" | "deletedAt"
+  | "id"
+  | "targetReps"
+  | "targetDuration"
+  | "createdAt"
+  | "updatedAt"
+  | "deletedAt"
 >;
 
-export type UpdateSetScheme = Omit<SetScheme, "exerciseRoutineId" | "createdAt" | "updatedAt" | "deletedAt">;
+export type UpdateSetScheme = Omit<
+  SetScheme,
+  "exerciseRoutineId" | "createdAt" | "updatedAt" | "deletedAt"
+>;
 
 export enum MeasurementType {
   weight = "WEIGHT",

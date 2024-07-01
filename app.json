@@ -32,11 +32,12 @@
     },
     "plugins": [
       "expo-router",
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-secure-store"
     ],
     "extra": {
       "untilFailureAPI": "",
-      "dbName":"until-failure.db"
+      "dbName": "until-failure.db"
     },
     "experiments": {
       "tsconfigPaths": true

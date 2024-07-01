@@ -60,43 +60,12 @@ const ExerciseRoutineList = ({
   }
 
   if (!routine) {
-    return <Text className="text-white">Skeleton</Text>;
+    return <Text className="text-white">no routine found :\</Text>;
   }
 
   return (
     <View className="h-full pt-2">
       <FlashList
-        ListHeaderComponent={
-          <View>
-            <View className="p-10 justify-center flex flex-col items-center">
-              <Image
-                src="https://preview.redd.it/standing-appa-appreciation-post-v0-dyfo9w0pzawa1.png?auto=webp&s=3e39c2dcac1232c69263107afbd6ab217dbb19bc"
-                className="w-2/3 aspect-square object-cover"
-              />
-            </View>
-            <TextInput
-              className="text-white text-4xl font-medium px-4"
-              value={name}
-              onChangeText={(name) => updateRoutine(name)}
-            />
-          </View>
-        }
-        ListFooterComponent={
-          <View className="pt-16 pb-16">
-            <Button
-              type="secondary"
-              onPress={() =>
-                createExerciseRoutine({
-                  name: `Exercise Routine #${routine.exerciseRoutines.length || 1}`,
-                  routineId: routine.id,
-                })}
-            >
-              <View className="flex flex-row justify-center self-center">
-                <Text>Add Exercise</Text>
-              </View>
-            </Button>
-          </View>
-        }
         data={routine.exerciseRoutines}
         renderItem={({ item: exerciseRoutine }) => (
           <ExerciseRoutine key={exerciseRoutine.id} exerciseRoutine={exerciseRoutine} />

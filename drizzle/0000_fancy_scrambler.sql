@@ -1,12 +1,19 @@
 CREATE TABLE `exercise_routines` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
+	`notes` text DEFAULT '' NOT NULL,
 	`active` integer NOT NULL,
-	`routine_id` text NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
-	`deleted_at` integer,
-	FOREIGN KEY (`routine_id`) REFERENCES `routines`(`id`) ON UPDATE no action ON DELETE no action
+	`deleted_at` integer
+);
+--> statement-breakpoint
+CREATE TABLE `exerciseRoutinesToRoutines` (
+	`exerciseRoutinesId` text NOT NULL,
+	`routineId` text NOT NULL,
+	PRIMARY KEY(`exerciseRoutinesId`, `routineId`),
+	FOREIGN KEY (`exerciseRoutinesId`) REFERENCES `exercise_routines`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`routineId`) REFERENCES `routines`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `exercises` (

@@ -1,7 +1,6 @@
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
-import { colors } from "@until-failure-app/src/theme";
 import {
   ExerciseRoutine as ExerciseRoutineType,
   MeasurementType,
@@ -11,7 +10,6 @@ import {
 } from "@until-failure-app/src/types";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
-import { styled } from "nativewind";
 import { useCallback, useContext, useRef, useState } from "react";
 import { Button as RNButton, Pressable, Text, TextInput as RNTextInput, TouchableOpacity, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
@@ -19,11 +17,9 @@ import Button from "../Button";
 import SetScheme from "../SetScheme";
 import { Sheet } from "../Sheet";
 
-const StyledBottomSheetBackdrop = styled(BottomSheetBackdrop);
-
-interface ExerciseRoutineProps {
+type ExerciseRoutineProps = {
   exerciseRoutine: ExerciseRoutineType;
-}
+};
 
 const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
   const { db } = useContext(DatabaseContext);
@@ -35,7 +31,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
     mutationFn: (id: string) => db.setSchemes.deleteSetScheme(id),
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["routine", exerciseRoutine.routineId],
+        queryKey: ["exerciseRoutine", exerciseRoutine.id],
       });
     },
     onError: (err) => {
@@ -48,7 +44,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
     mutationFn: (id: string) => db.exerciseRoutines.deleteExerciseRoutine(id),
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["routine", exerciseRoutine.routineId],
+        queryKey: ["exerciseRoutine", exerciseRoutine.id],
       });
     },
     onError: (err) => {
@@ -65,7 +61,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
       db.exerciseRoutines.updateExerciseRoutine(updatedExerciseRoutine),
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["routine", exerciseRoutine.routineId],
+        queryKey: ["exerciseRoutine", exerciseRoutine.id],
       });
     },
     onError: (err) => {
@@ -77,7 +73,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
     mutationFn: (newSetScheme: NewSetScheme) => db.setSchemes.createSetScheme(newSetScheme),
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["routine", exerciseRoutine.routineId],
+        queryKey: ["exerciseRoutine", exerciseRoutine.id],
       });
     },
     onError: (err) => {
@@ -143,7 +139,7 @@ const ExerciseRoutine = ({ exerciseRoutine }: ExerciseRoutineProps) => {
                   <View>
                     <SetScheme
                       setScheme={setScheme}
-                      routineId={exerciseRoutine.routineId}
+                      exerciseRoutineId={exerciseRoutine.id}
                     />
                   </View>
                 </Swipeable>

@@ -31,7 +31,7 @@ export default function ViewWorkout() {
   }
 
   return (
-    <View className="px-4 h-screen w-full">
+    <View className="px-4 w-full">
       <Stack.Screen
         options={{
           headerBackTitle: "workouts",

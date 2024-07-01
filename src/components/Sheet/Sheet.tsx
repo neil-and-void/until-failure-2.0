@@ -10,13 +10,15 @@ interface SheetProps {
   children: ReactNode;
   sheetRef: RefObject<BottomSheetModalMethods>;
   snapPoints: string[];
+  enablePanDownToClose: boolean;
 }
 
-export const Sheet = ({ children, sheetRef, snapPoints }: SheetProps) => {
+export const Sheet = ({ children, sheetRef, snapPoints, enablePanDownToClose = true }: SheetProps) => {
   return (
     <BottomSheetModal
       ref={sheetRef}
       index={0}
+      enablePanDownToClose={enablePanDownToClose}
       snapPoints={snapPoints}
       backdropComponent={(backdropProps) => (
         <StyledBottomSheetBackdrop

@@ -2,18 +2,18 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DatabaseContext } from "@until-failure-app/src/contexts/DatabaseContext";
-import { Routine } from "@until-failure-app/src/types";
+import { ExerciseRoutine } from "@until-failure-app/src/types";
 import { router } from "expo-router";
 import { useCallback, useContext, useRef } from "react";
 import { Pressable, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { Sheet } from "../Sheet";
 
-interface RoutineListItemProps {
-  routine: Routine;
+interface ExerciseLibraryListItemProps {
+  exerciseRoutine: ExerciseRoutine;
 }
 
-const RoutineListItem = ({ routine }: RoutineListItemProps) => {
+const ExerciseRoutineListItem = ({ exerciseRoutine }: ExerciseLibraryListItemProps) => {
   const { db } = useContext(DatabaseContext);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -23,11 +23,11 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  const { mutate: deleteRoutine } = useMutation({
-    mutationFn: (id: string) => db.routines.deleteRoutine(id),
+  const { mutate: deleteExerciseRoutine } = useMutation({
+    mutationFn: (id: string) => db.exerciseRoutines.deleteExerciseRoutine(id),
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["routines"],
+        queryKey: ["exerciseRoutines"],
       });
     },
     onError: (err) => {
@@ -42,7 +42,7 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
   return (
     <>
       <Swipeable
-        key={routine.id}
+        key={exerciseRoutine.id}
         renderRightActions={() => (
           <Pressable
             className="bg-delete h-full px-4 flex flex-col justify-center"
@@ -54,11 +54,11 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
       >
         <TouchableHighlight
           className="py-2 bg-black border-t border-gray-800 flex"
-          onPress={() => router.push(`/library/routines/${routine.id}`)}
+          onPress={() => router.push(`/library/exerciseRoutines/${exerciseRoutine.id}`)}
         >
           <View>
-            <Text className="text-white text-lg">{routine.name}</Text>
-            <Text className="text-white text-md">5 exercises</Text>
+            <Text className="text-white text-lg">{exerciseRoutine.name}</Text>
+            <Text className="text-white text-md">5 sets</Text>
           </View>
         </TouchableHighlight>
       </Swipeable>
@@ -75,7 +75,7 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
             <TouchableOpacity
               className="flex flex-row justify-center p-4"
               onPress={() => {
-                deleteRoutine(routine.id);
+                deleteExerciseRoutine(exerciseRoutine.id);
               }}
             >
               <Text className="text-error text-md font-medium">delete</Text>
@@ -87,33 +87,29 @@ const RoutineListItem = ({ routine }: RoutineListItemProps) => {
   );
 };
 
-interface RoutineListProps {
-  routines: Routine[];
+type ExerciseLibraryProps = {
+  exerciseRoutines: ExerciseRoutine[];
   loading: boolean;
-}
+};
 
-const RoutineList = ({ routines, loading }: RoutineListProps) => {
+export const ExerciseLibrary = (props: ExerciseLibraryProps) => {
+  const { exerciseRoutines, loading } = props;
+
   if (loading) {
-    return <Text className="text-white">Skeleton</Text>;
+    return <Text className="text-white">Loading</Text>;
   }
 
-  if (routines.length === 0) {
-    return (
-      <View>
-        <Text>No routines</Text>
-      </View>
-    );
+  if (exerciseRoutines.length === 0) {
+    return <Text className="text-white">no exercises found</Text>;
   }
 
   return (
     <View className="h-full px-4">
       <FlashList
-        data={routines}
+        data={exerciseRoutines}
         estimatedItemSize={62}
-        renderItem={({ item: routine }) => <RoutineListItem routine={routine} />}
+        renderItem={({ item: exerciseRoutine }) => <ExerciseRoutineListItem exerciseRoutine={exerciseRoutine} />}
       />
     </View>
   );
 };
-
-export default RoutineList;

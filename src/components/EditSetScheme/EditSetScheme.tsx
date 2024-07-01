@@ -134,7 +134,7 @@ const SetTypeForm = ({ setIsOpen, setScheme, onSave }: SetTypeForm) => {
       />
       <View className="flex flex-row justify-end items-center">
         <Button title="cancel" onPress={() => setIsOpen(false)} />
-        <Button title="save" onPress={() => handleSave()} />
+        <Button title="ok" onPress={() => handleSave()} />
       </View>
     </View>
   );
@@ -177,10 +177,11 @@ const MeasurementTypeForm = ({
 };
 
 interface EditSetSchemeProps {
+  exerciseRoutineId?: string;
   routineId?: string;
 }
 
-const EditSetScheme = ({ routineId }: EditSetSchemeProps) => {
+const EditSetScheme = ({ routineId, exerciseRoutineId }: EditSetSchemeProps) => {
   const { editSetSchemeModalState, setEditSetSchemeModalState } = useContext(
     EditSetSchemeModalContext,
   );
@@ -191,7 +192,7 @@ const EditSetScheme = ({ routineId }: EditSetSchemeProps) => {
     mutationFn: (updatedSetScheme: UpdateSetScheme) => db.setSchemes.updateSetScheme(updatedSetScheme),
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["routine", routineId],
+        queryKey: ["exerciseRoutine", exerciseRoutineId],
       });
     },
     onSuccess: () => {
@@ -212,7 +213,7 @@ const EditSetScheme = ({ routineId }: EditSetSchemeProps) => {
     });
   };
 
-  if (!routineId || editSetSchemeModalState.setScheme === null) {
+  if (!exerciseRoutineId || editSetSchemeModalState.setScheme === null) {
     return (
       <View>
         <Text className="text-white">set scheme is null</Text>

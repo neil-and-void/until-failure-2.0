@@ -65,10 +65,10 @@ const SetSchemeTextFields = ({
 
 interface SetSchemeProps {
   setScheme: SetSchemeType;
-  routineId: string;
+  exerciseRoutineId: string;
 }
 
-const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
+const SetScheme = ({ setScheme, exerciseRoutineId }: SetSchemeProps) => {
   const { editSetSchemeModalState, setEditSetSchemeModalState } = useContext(
     EditSetSchemeModalContext,
   );
@@ -81,7 +81,7 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
     mutationFn: (updatedSetScheme: UpdateSetScheme) => db.setSchemes.updateSetScheme(updatedSetScheme),
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["routine", routineId],
+        queryKey: ["exerciseRoutine", exerciseRoutineId],
       });
     },
     onError: (err) => {
@@ -128,13 +128,15 @@ const SetScheme = ({ setScheme, routineId }: SetSchemeProps) => {
       <View className="basis-1/4 pr-1 shrink-0">
         <Pressable
           className="text-md bg-secondary-900 p-4 border border-secondary-500 rounded-md text-white flex flex-row"
-          onPress={() =>
+          onPress={() => {
+            console.log(setEditSetSchemeModalState);
             setEditSetSchemeModalState({
               ...editSetSchemeModalState,
               isOpen: true,
               type: EditSetSchemeModalType.setType,
               setScheme,
-            })}
+            });
+          }}
         >
           <Text
             className="text-white text-center"
